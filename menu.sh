@@ -75,7 +75,7 @@ do
     1) modules+=("bash") ;;
     2) modules+=("vim") ;;
     3) modules+=("i3wm") ;;
-    4) modules+=("extra") ;;
+    5) modules+=("extra") ;;
   esac
 done
 
