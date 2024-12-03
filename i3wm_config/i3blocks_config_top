@@ -31,6 +31,10 @@ interval=10
 HEIGHT=-10
 WIDTH=240
 
+[i3timer]
+command=~/go/bin/i3-timer -alarm-command="notify-send 'i3-timer' 'Alarm Elapsed!'; play /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga"
+interval=10
+
 [monitors]
 command=~/.config/i3/scripts/monitor_manager
 interval=once

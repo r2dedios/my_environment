@@ -15,7 +15,7 @@
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:Source Code Pro, FontAwesome:style=Regular 10
+font pango:Source Code Pro, FontAwesome:style=Regular 12
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
@@ -210,7 +210,7 @@ client.background       #FFFFFF
 bar {
   position       top
   status_command i3blocks -c ~/.config/i3/i3blocks_config_top
-  tray_output    eDP-1
+  tray_output    primary
 
   colors {
     background #111111
@@ -263,3 +263,41 @@ mode $session {
 }
 
 bindsym Mod1+Shift+s mode $session
+
+set $monitor_main "DP-3-1"
+set $monitor_sec "DP-1"
+set $monitor_laptop "eDP-1"
+
+workspace $ws1 output $monitor_main
+workspace $ws2 output $monitor_main
+workspace $ws3 output $monitor_sec
+workspace $ws4 output $monitor_sec
+workspace $ws5 output $monitor_sec
+workspace $ws6 output $monitor_sec
+workspace $ws7 output $monitor_sec
+workspace $ws8 output $monitor_sec
+workspace $ws9 output $monitor_sec
+workspace $ws10 output $monitor_laptop
+
+
+# Macro Keyboard bindings
+for_window [window_role="^floating$"] floating enable workspace $ws3
+# Mute Mic
+bindcode 206 exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+bindsym XF86WebCam      exec /home/avillega/work/github/my_environment/custom_keyboard/decrease-bright.sh
+bindsym XF86AudioPreset exec /home/avillega/work/github/my_environment/custom_keyboard/increase-bright.sh
+bindsym XF86Finance     exec /home/avillega/work/github/my_environment/custom_keyboard/config-screens.sh
+bindsym XF86Game        exec /home/avillega/work/github/my_environment/custom_keyboard/config-workspaces.sh
+bindsym XF86Launch1 exec i3-msg workspace $ws1;  exec --no-startup-id st
+bindsym XF86Launch2 exec i3-msg workspace $ws1;  exec --no-startup-id google-chrome --profile-directory="Default"
+bindsym XF86Launch3 exec i3-msg workspace $ws3;  exec --no-startup-id slack
+bindsym XF86Launch4 exec i3-msg workspace $ws10; exec --no-startup-id spotify
+bindsym XF86Launch5 exec i3-msg workspace $ws4;  exec --no-startup-id google-chrome --profile-directory="Profile 2"
+bindsym XF86Launch6 exec i3-msg workspace $ws3;  exec --no-startup-id terminator -e "top" --role=floating
+bindsym XF86Launch7 exec i3-msg workspace $ws2;  exec --no-startup-id terminator -e "ranger"
+bindsym XF86Launch8 exec i3-msg workspace $ws2;  exec --no-startup-id terminator -e "vim"
+bindsym XF86Launch9 exec i3-msg workspace $ws1; exec --no-startup-id gnome-control-center
+bindsym XF86LaunchA exec --no-startup-id flameshot gui
+bindsym XF86LaunchB exec ~/.config/i3/scripts/i3lock/lock
+bindsym XF86Go exec arandr
+bindsym XF86Shop kill

@@ -22,7 +22,7 @@ interval=10
 
 [iface]
 command=~/.config/i3/scripts/iface -f " {status}" -cg "#1FC40D" -cc "#DE1212"
-instance=enp44s0u1
+instance=enp9s0u2u1u2
 interval=10
 
 #[wifi]
@@ -41,29 +41,27 @@ interval=10
 color=#1FC40D
 
 [battery]
-command=~/.config/i3/scripts/battery
+command=/home/avillega/work/github/adormidera/wm_scripts/scripts/battery
 interval=30
 color=#1FC40D
 
 # CPU
 [cpu]
-label= 
-command=~/.config/i3/scripts/cpu_usage
+command=/home/avillega/work/github/adormidera/wm_scripts/scripts/cpu_percent
 interval=10
-color=#1070FF
 
 # Memory
 [memory]
-label= 
-command=~/.config/i3/scripts/memory
+command=/home/avillega/work/github/adormidera/wm_scripts/scripts/memory
 interval=10
-color=#1070FF
 
 
 # Disk usage
 [disk]
-label= 
-command=~/.config/i3/scripts/disk
+ARF_DIR=/
+command=/home/avillega/work/github/adormidera/wm_scripts/scripts/disk
 interval=120
-color=#1070FF
-DIR=/
+
+[space]
+command=echo ""
+interval=once

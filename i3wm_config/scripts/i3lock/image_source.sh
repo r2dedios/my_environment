@@ -19,7 +19,7 @@ image_screenshot() {
 
 image_wallpaper() {
 	#echo '/home/carlos/Pictures/the_expanse_2k.2.jpg'
-	convert '/home/carlos/Pictures/the_expanse_2k.2.jpg' -colorspace Gray "$1"
+	convert '/tmp/the_expanse_2k.2.jpg' -colorspace Gray "$1"
 	echo "$1"
 }
 
