@@ -1,0 +1,173 @@
+#    ____   ____.__.__  .__                               __________               .__
+#    \   \ /   /|__|  | |  |   ____   _________    ______ \______   \_____    _____|  |_________   ____
+#     \   Y   / |  |  | |  | _/ __ \ / ___\__  \  /  ___/  |    |  _/\__  \  /  ___/  |  \_  __ \_/ ___\
+#      \     /  |  |  |_|  |_\  ___// /_/  > __ \_\___ \   |    |   \ / __ \_\___ \|   Y  \  | \/\  \___
+#       \___/   |__|____/____/\___  >___  (____  /____  >  |______  /(____  /____  >___|  /__|    \___  >
+#                                 \/_____/     \/     \/          \/      \/     \/     \/            \/
+#
+#################################################################################################################
+
+
+
+
+
+#============================== History Conf ==================================#
+#==============================================================================#
+# Number of lines/commands stored in memory for the current session
+HISTSIZE=2000
+# Number of lines/commands stored in the history file
+HISTFILESIZE=20000
+# History Date Format
+HISTTIMEFORMAT="%d/%m/%y %T "
+
+# Don't put duplicate lines or lines starting with space in the history.
+HISTCONTROL=ignoreboth
+
+# Append to the history file, don't overwrite it
+shopt -s histappend
+
+# Check the window size after each command and, if necessary,
+# Update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+
+
+
+
+#============================== Bash Prompt ===================================#
+#==============================================================================#
+# Get current branch in git repo
+function parse_git_branch() {
+  BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+  if [ ! "${BRANCH}" == "" ]
+  then
+    STAT=`parse_git_dirty`
+    echo "[${BRANCH}${STAT}] "
+  else
+    echo ""
+  fi
+}
+
+# Get current status of git repo
+function parse_git_dirty {
+  status=`git status 2>&1 | tee`
+  dirty=`echo -n "${status}" 2> /dev/null | grep "modified:" &> /dev/null; echo "$?"`
+  untracked=`echo -n "${status}" 2> /dev/null | grep "Untracked files" &> /dev/null; echo "$?"`
+  ahead=`echo -n "${status}" 2> /dev/null | grep "Your branch is ahead of" &> /dev/null; echo "$?"`
+  newfile=`echo -n "${status}" 2> /dev/null | grep "new file:" &> /dev/null; echo "$?"`
+  renamed=`echo -n "${status}" 2> /dev/null | grep "renamed:" &> /dev/null; echo "$?"`
+  deleted=`echo -n "${status}" 2> /dev/null | grep "deleted:" &> /dev/null; echo "$?"`
+  bits=''
+  if [ "${renamed}" == "0" ]; then
+    bits=">${bits}"
+  fi
+  if [ "${ahead}" == "0" ]; then
+    bits="*${bits}"
+  fi
+  if [ "${newfile}" == "0" ]; then
+    bits="+${bits}"
+  fi
+  if [ "${untracked}" == "0" ]; then
+    bits="?${bits}"
+  fi
+  if [ "${deleted}" == "0" ]; then
+    bits="x${bits}"
+  fi
+  if [ "${dirty}" == "0" ]; then
+    bits="!${bits}"
+  fi
+  if [ ! "${bits}" == "" ]; then
+    echo " ${bits}"
+  else
+    echo ""
+  fi
+}
+
+_villegas_color_prompt=yes
+if [ "$_villegas_color_prompt" = yes ]; then
+  export PS1="\[\e[31;1m\]\u\[\e[m\]\[\e[93m\]@\[\e[m\]\[\e[94;1m\]\h\[\e[m\]\[\e[93;1m\]:\[\e[m\]\[\e[33;1m\]\W\[\e[m\] \[\e[32;1m\]\`parse_git_branch\`\[\e[m\]\[\e[93;1m\]\\$\[\e[m\] "
+else
+  export PS1="\u@\h:\W\\$ "
+fi
+unset _villegas_color_prompt
+
+
+
+
+
+#============================== GCC Config ====================================#
+#==============================================================================#
+# colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+
+
+
+
+#============================== Bash Completion ===============================#
+#==============================================================================#
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+source ~/.bashrc
+
+
+
+
+
+#============================== Env Config ====================================#
+#==============================================================================#
+# Vi keys on bash
+set -o vi
+export EDITOR=/usr/bin/vim
+export PATH=$PATH:~/.local/bin
+export PATH=$PATH:~/.istioctl/bin
+export PATH=$PATH:~/go/bin
+export PATH=$PATH:/usr/share/git-core/contrib
+export GOPATH=~/go
+export PATH=$PATH:/usr/local/go/bin
+export GO111MODULE="on"
+
+
+
+
+
+#============================== Alias =========================================#
+#==============================================================================#
+## Bash alias
+alias vbash='vim ~/.bash_profile'
+alias ls='ls --color=auto'
+alias ll='ls -l'
+alias la='ls -a'
+alias grep='grep --color'
+alias wifi_list='nmcli dev wifi list'
+alias wifi_scan='nmcli device wifi rescan'
+alias wifi_connect='nmcli device wifi connect $1 password $2'
+alias wifi_on='nmcli radio wifi on'
+alias wifi_off='nmcli radio wifi off'
+alias myip='dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com'
+alias copy='xclip -sel clip $1'
+
+## Git alias
+git config --global alias.lg "log --all --decorate --graph --oneline"
+. "$HOME/.cargo/env"
+
+## Develop alias
+alias superlinter='podman run --privileged -e RUN_LOCAL=true -e DEFAULT_BRANCH=main -e VALIDATE_MARKDOWN=true -e VALIDATE_NATURAL_LANGUAGE=true -v $PWD:/tmp/lint ghcr.io/super-linter/super-linter:latest'
+
+## K8s alias
+alias kubehere='export KUBECONFIG="$(readlink -f ./kubeconfig)"'
+alias vkube='vim ~/.kube/config'
+alias k='kubectl'
+
+## Openshift alias
+alias operator_get_csv='oc get packagemanifests $1 -o jsonpath="{range .status.channels[*]}Channel: {.name} currentCSV: {.currentCSV}{\"\n\"}{end}"'
+alias operator_get_catalogsource='oc get packagemanifests $1 -o jsonpath={.status.catalogSource}'
+alias operator_get_catalogsourcens='oc get packagemanifests $1 -o jsonpath={.status.catalogSourceNamespace}'
