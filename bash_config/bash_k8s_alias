@@ -1,0 +1,12 @@
+# vi: ft=sh
+
+
+## K8s alias
+alias kubehere='export KUBECONFIG="$(readlink -f ./kubeconfig)"'
+alias vkube='vim ~/.kube/config'
+alias k='kubectl'
+
+## Openshift alias
+alias operator_get_csv='oc get packagemanifests $1 -o jsonpath="{range .status.channels[*]}Channel: {.name} currentCSV: {.currentCSV}{\"\n\"}{end}"'
+alias operator_get_catalogsource='oc get packagemanifests $1 -o jsonpath={.status.catalogSource}'
+alias operator_get_catalogsourcens='oc get packagemanifests $1 -o jsonpath={.status.catalogSourceNamespace}'
