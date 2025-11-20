@@ -1,0 +1,53 @@
+#    ____   ____.__.__  .__                               __________               .__                              _____.__.__
+#    \   \ /   /|__|  | |  |   ____   _________    ______ \______   \_____    _____|  |__      _____________  _____/ ____\__|  |   ____
+#     \   Y   / |  |  | |  | _/ __ \ / ___\__  \  /  ___/  |    |  _/\__  \  /  ___/  |  \     \____ \_  __ \/  _ \   __\|  |  | _/ __ \
+#      \     /  |  |  |_|  |_\  ___// /_/  > __ \_\___ \   |    |   \ / __ \_\___ \|   Y  \    |  |_> >  | \(  <_> )  |  |  |  |_\  ___/
+#       \___/   |__|____/____/\___  >___  (____  /____  >  |______  /(____  /____  >___|  /____|   __/|__|   \____/|__|  |__|____/\___  >
+#                                 \/_____/     \/     \/          \/      \/     \/     \/_____/__|                                   \/
+#
+################################################################################################################################################
+#
+# vi: ft=sh
+
+
+#============================== Env Config (login) ===========================#
+# These are per-session environment variables and PATH updates.
+# They should run once per login shell, not on every subshell.
+export EDITOR=/usr/bin/vim
+
+# Go environment
+export GOPATH="$HOME/go"
+export GO111MODULE="on"
+
+
+# PATH extensions
+export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:$HOME/.istioctl/bin"
+export PATH="$PATH:$HOME/go/bin"
+export PATH="$PATH:/usr/share/git-core/contrib"
+export PATH="$PATH:/usr/local/go/bin"
+
+
+# colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+
+# Custom configs
+export _VILLEGAS_COLOR_PROMPT=true
+
+
+# Cargo env (Rust)
+if [ -f "$HOME/.cargo/env" ]; then
+  . "$HOME/.cargo/env"
+fi
+
+
+# Git configuration & alias
+git config --global alias.lg "log --all --decorate --graph --oneline"
+
+
+#============================== Load interactive config ======================#
+# Load ~/.bashrc for interactive shells (prompt, aliases, completion, etc.)
+if [ -f "$HOME/.bashrc" ]; then
+  . "$HOME/.bashrc"
+fi

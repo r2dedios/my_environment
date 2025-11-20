@@ -1,10 +1,16 @@
 #!/bin/bash
+
+# Log File path
 LOG_FILE="/tmp/avillegas_installer.log"
 
+# Global Vars
 modules=()
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 RUN_DATE="$(date +%s)"
-TO_INSTALL_PACKAGES="vim git tree ack git tmux curl wget jq yq fzf htop"
+CUSTOM_ALIASES_PATH=$HOME/.bash_custom_alias
+
+# Install Packages
+TO_INSTALL_RPM_PACKAGES="vim git tree ack git tmux curl wget jq yq fzf htop"
 
 # Auxiliar function to backup dotfiles. Use absolut paths to avoid errors
 function backup_file {
@@ -26,9 +32,24 @@ function link_file {
 
 # Install Bash config
 function install_bash_config {
+  backup_file $HOME/.bash_profile
+  link_file bash_config/bashrc $HOME/.bash_profile
+
   backup_file $HOME/.bashrc
   link_file bash_config/bashrc $HOME/.bashrc
+
   echo "-- Installed Bash config for user: '$USER'"
+}
+
+# Install Bash k8s aliases
+function init_bash_custom_alias {
+  mkdir -p $CUSTOM_ALIASES_PATH
+}
+
+function install_bash_k8s_alias {
+  init_bash_custom_alias
+  link_file bash_config/bash_k8s_alias $CUSTOM_ALIASES_PATH/bash_k8s_alias
+  echo -e "-- Installed Bash k8s/OCP Aliases for user: '$USER'"
 }
 
 # Install vim config and update plugins
@@ -68,7 +89,9 @@ function install_extra {
   local os_release=$(cat /etc/os-release | grep -e "^NAME=.*$" | sed 's/NAME=\(.*\)/\1/g')
 
   case $os_release in
-    "Fedora"|"Red Hat Enterprise Linux"|"CentOS Stream"|"Rocky Linux"|"AlmaLinux") sudo dnf install tree ack git vim ;;
+    Fedora)
+      echo "-- Installing packages"
+      sudo dnf install $TO_INSTALL_RPM_PACKAGES ;;
     *) echo "Unsuported Linux Dist: $os_release" ;;
   esac
 }
@@ -77,6 +100,7 @@ function install {
   for module in ${modules[@]}; do
     case $module in
       bash) install_bash_config ;;
+      k8s_alias) install_bash_k8s_alias ;;
       vim) install_vim_config ;;
       i3wm) install_i3wm_config ;;
       extra) install_extra ;;
@@ -87,19 +111,25 @@ function install {
 }
 
 cmd=(dialog --title "Alejandro Villegas configuration installer" --separate-output --checklist "Select packages to install:" 22 76 16)
-options=(1 "Bash" on
-         2 "ViM" on
-         3 "i3wm" on
-         4 "Extra tools (require sudo)" off)
+options=(
+  1 "Bash" on
+  2 "Bash K8s/OCP aliases" on
+  3 "ViM" on
+  4 "i3wm" on
+  5 "Extra Packages (require sudo)" off
+)
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 [[ $? -eq 1 ]] && { dialog --title "Aborted" --msgbox "Installation Aborted" 7 80; clear; exit; }
 clear
+
+# Reviewing selected options
 for choice in $choices
 do
   case $choice in
     1) modules+=("bash") ;;
-    2) modules+=("vim") ;;
-    3) modules+=("i3wm") ;;
+    2) modules+=("k8s_alias") ;;
+    3) modules+=("vim") ;;
+    4) modules+=("i3wm") ;;
     5) modules+=("extra") ;;
   esac
 done
