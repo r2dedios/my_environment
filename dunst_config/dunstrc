@@ -1,0 +1,23 @@
+# vi: ft=ini
+
+[global]
+    font = Monospace 11
+    geometry = "300x4-4+40"
+    timeout = 10
+    history = 20
+
+[urgency_low]
+    background = "#333333"
+    foreground = "#DDDDDD"
+    frame_color = "#555555"
+
+[urgency_normal]
+    background = "#222222"
+    foreground = "#FFFFFF"
+    frame_color = "#444444"
+
+[urgency_critical]
+    background = "#FF0000"
+    foreground = "#FFFFFF"
+    frame_color = "#FF5555"
+    timeout = 0

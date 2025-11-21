@@ -1,0 +1,35 @@
+#!/bin/sh
+# i3blocks brightness block using brightnessctl.
+# - Scroll up   (button 4): increase brightness by 5%
+# - Scroll down (button 5): decrease brightness by 5%
+
+# Handle scroll events
+case "$BLOCK_BUTTON" in
+    4)
+        brightnessctl set +5% >/dev/null 2>&1
+        ;;
+    5)
+        brightnessctl set 5%- >/dev/null 2>&1
+        ;;
+esac
+
+# Read current and maximum brightness
+cur=$(brightnessctl get 2>/dev/null) || {
+    echo "Bri: N/A"
+    exit 0
+}
+
+max=$(brightnessctl max 2>/dev/null) || {
+    echo "Bri: N/A"
+    exit 0
+}
+
+# Avoid division by zero
+if [ "$max" -le 0 ] 2>/dev/null; then
+    echo "Bri: N/A"
+    exit 0
+fi
+
+pct=$(( 100 * cur / max ))
+
+printf ": %s%%\n" "$pct"

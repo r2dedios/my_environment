@@ -209,7 +209,7 @@ client.background       #FFFFFF
 # TOP BAR
 bar {
   position       top
-  status_command i3blocks -c ~/.config/i3/i3blocks_config_top
+  status_command i3blocks -c ~/.config/i3/top_bar.conf
   tray_output    primary
 
   colors {
@@ -227,14 +227,15 @@ bar {
 
 # BOTTOM BAR
 bar {
+  id                bottom_bar
   position          bottom
-  status_command    i3blocks -c ~/.config/i3/i3blocks_config_bottom
+  status_command    i3status --config ~/.config/i3/bottom_bar.conf
   workspace_buttons no
   tray_output       none
 
   colors {
     background #111111
-    statusline #FFFFFF
+    statusline #00FF00
     separator  #666666
   }
 }

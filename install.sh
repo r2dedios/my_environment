@@ -10,7 +10,7 @@ RUN_DATE="$(date +%s)"
 CUSTOM_ALIASES_PATH=$HOME/.bash_custom_alias
 
 # Install Packages
-TO_INSTALL_RPM_PACKAGES="vim git tree ack git tmux curl wget jq yq fzf htop"
+TO_INSTALL_RPM_PACKAGES="vim git tree ack git tmux curl wget jq yq fzf htop flameshot okular i3blocks dunst"
 
 # Auxiliar function to backup dotfiles. Use absolut paths to avoid errors
 function backup_file {
@@ -74,15 +74,29 @@ function install_vim_config {
   echo "-- Installed ViM packages"
 }
 
+function install_dunst_config {
+  mkdir -p $HOME/.config/dunst
+
+  backup_file $HOME/.config/dunst/dunstrc
+  link_file dunst_config/dunstrc $HOME/.config/dunst/dunstrc
+  echo "-- Installed dunst config"
+}
+
+
 function install_i3wm_config {
   mkdir -p $HOME/.config/i3
 
   backup_file $HOME/.config/i3/config
   link_file i3wm_config/i3wm_config $HOME/.config/i3/config
-  echo "-- Installed I3wm config"
+  echo "-- Installed i3wm config"
+
+  mkdir -p $HOME/.config/i3/i3status
+  link_file i3wm_config/i3blocks_top_bar.conf $HOME/.config/i3/top_bar.conf
+  link_file i3wm_config/i3status_bottom_bar.conf $HOME/.config/i3/bottom_bar.conf
+  echo "-- Installed i3status config"
 
   link_file i3wm_config/scripts $HOME/.config/i3/scripts
-  echo "-- Installed I3wm scripts"
+  echo "-- Installed i3wm scripts"
 }
 
 function install_extra {
@@ -103,6 +117,7 @@ function install {
       k8s_alias) install_bash_k8s_alias ;;
       vim) install_vim_config ;;
       i3wm) install_i3wm_config ;;
+      dunst) install_dunst_config ;;
       extra) install_extra ;;
       *) echo $module; sleep 1 ;;
     esac
@@ -116,7 +131,8 @@ options=(
   2 "Bash K8s/OCP aliases" on
   3 "ViM" on
   4 "i3wm" on
-  5 "Extra Packages (require sudo)" off
+  5 "dunst" on
+  6 "Extra Packages (require sudo)" off
 )
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 [[ $? -eq 1 ]] && { dialog --title "Aborted" --msgbox "Installation Aborted" 7 80; clear; exit; }
@@ -130,7 +146,8 @@ do
     2) modules+=("k8s_alias") ;;
     3) modules+=("vim") ;;
     4) modules+=("i3wm") ;;
-    5) modules+=("extra") ;;
+    5) modules+=("dunst") ;;
+    6) modules+=("extra") ;;
   esac
 done
 
