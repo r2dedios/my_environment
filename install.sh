@@ -12,10 +12,10 @@ CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 
 # Install Packages
 PACKAGES_BASIC="vim git tmux curl wget"
-PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular i3blocks dunst"
+PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular i3blocks i3status dunst"
 
 # Auxiliar function to backup dotfiles. Use absolut paths to avoid errors
-function backup_file {
+function backup_file() {
   local source=$1
   local dest=$source-$RUN_DATE.bck
 
@@ -23,7 +23,7 @@ function backup_file {
 }
 
 # Auxiliar funciton to link dotfiles
-function link_file {
+function link_file() {
   local source=$1
   local dest=$2
 
@@ -34,7 +34,7 @@ function link_file {
 }
 
 # Install Bash config
-function install_bash_config {
+function install_bash_config() {
   backup_file $DEST_USER_HOME_DIR/.bash_profile
   link_file bash_config/bashrc $DEST_USER_HOME_DIR/.bash_profile
 
@@ -45,19 +45,19 @@ function install_bash_config {
 }
 
 # Install Bash k8s aliases
-function init_bash_custom_alias {
+function init_bash_custom_alias() {
   mkdir -p $CUSTOM_ALIASES_PATH
   chown $DEST_USER:$DEST_USER $CUSTOM_ALIASES_PATH
 }
 
-function install_bash_k8s_alias {
+function install_bash_k8s_alias() {
   init_bash_custom_alias
   link_file bash_config/bash_k8s_alias $CUSTOM_ALIASES_PATH/bash_k8s_alias
   echo -e "-- Installed Bash k8s/OCP Aliases for user: '$DEST_USER'"
 }
 
 # Install vim config and update plugins
-function install_vim_config {
+function install_vim_config() {
   backup_file $DEST_USER_HOME_DIR/.vimrc
   link_file vim_config/vimrc $DEST_USER_HOME_DIR/.vimrc
   echo "-- Installed ViM config for user: '$DEST_USER'"
@@ -78,16 +78,7 @@ function install_vim_config {
   echo "-- Installed ViM packages"
 }
 
-function install_dunst_config {
-  mkdir -p $DEST_USER_HOME_DIR/.config/dunst
-
-  backup_file $DEST_USER_HOME_DIR/.config/dunst/dunstrc
-  link_file dunst_config/dunstrc $DEST_USER_HOME_DIR/.config/dunst/dunstrc
-  echo "-- Installed dunst config"
-}
-
-
-function install_i3wm_config {
+function install_i3wm_config() {
   mkdir -p $DEST_USER_HOME_DIR/.config/i3
 
   backup_file $DEST_USER_HOME_DIR/.config/i3/config
@@ -103,17 +94,17 @@ function install_i3wm_config {
   echo "-- Installed i3wm scripts"
 }
 
-function install_basic_packages {
+function install_basic_packages() {
   install_packages $PACKAGES_BASIC
   echo "-- Basic packages installed correctly"
 }
 
-function install_extra_packages {
+function install_extra_packages() {
   install_packages $PACKAGES_EXTRA
   echo "-- Extra packages installed correctly"
 }
 
-function install_packages {
+function install_packages() {
   local packages=$1
   local os_release=$(cat /etc/os-release | grep -e "^NAME=.*$" | sed 's/NAME=\(.*\)/\1/g')
 
@@ -123,6 +114,18 @@ function install_packages {
       sudo dnf install -y --quiet $packages ;;
     *) echo "Unsuported Linux Dist: $os_release" ;;
   esac
+}
+
+function install_dunst_config() {
+  mkdir -p $DEST_USER_HOME_DIR/.config/dunst
+
+  backup_file $DEST_USER_HOME_DIR/.config/dunst/dunstrc
+  link_file dunst_config/dunstrc $DEST_USER_HOME_DIR/.config/dunst/dunstrc
+  echo "-- Installed dunst config"
+}
+
+function install_suckless_packages() {
+  echo "-- Installed Suckless Software components"
 }
 
 function select_target_user() {
@@ -158,7 +161,7 @@ function select_target_user() {
 	DEST_USER="$selected"
 }
 
-function install {
+function install() {
   DEST_USER_HOME_DIR="$(getent passwd "$DEST_USER" | cut -d: -f6)"
 	CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 
@@ -171,8 +174,9 @@ function install {
       vim) install_vim_config ;;
       i3wm) install_i3wm_config ;;
       dunst) install_dunst_config ;;
+      suckless) install_suckless_packages ;;
       extra) install_extra_packages ;;
-      *) echo $module; sleep 1 ;;
+      *) echo "-- Missing module: '$module'"; sleep 1 ;;
     esac
   done 2>&1 >> $LOG_FILE
   echo "-- Installation Finished. Press ENTER to finish" >> $LOG_FILE
