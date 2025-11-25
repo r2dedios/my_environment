@@ -1,5 +1,5 @@
 # Skip suckless build paths
-./suckless/*/build
+suckless/*/build
 
 *.swp
 vim_config/vim

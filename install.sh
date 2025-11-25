@@ -10,7 +10,8 @@ RUN_DATE="$(date +%s)"
 CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 
 # Install Packages
-PACKAGES_BASIC="vim git tmux curl wget gcc make surf fontawesome-fonts-all libX11-devel"
+PACKAGES_BASIC="vim git tmux curl wget gcc make surf fontawesome-fonts-all"
+PACKAGES_DEV_DEPS="@development-tools libX11-devel libXft-devel libXext-devel fontconfig-devel freetype-devel libXinerama-devel"
 PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular i3blocks i3status dunst"
 
 # Suckless software configs
@@ -45,7 +46,7 @@ function create_dir() {
 # Install Bash config
 function install_bash_config() {
   backup_file $DEST_USER_HOME_DIR/.bash_profile
-  link_file bash_config/bashrc $DEST_USER_HOME_DIR/.bash_profile
+  link_file bash_config/bash_profile $DEST_USER_HOME_DIR/.bash_profile
 
   backup_file $DEST_USER_HOME_DIR/.bashrc
   link_file bash_config/bashrc $DEST_USER_HOME_DIR/.bashrc
@@ -104,23 +105,25 @@ function install_i3wm_config() {
 }
 
 function install_basic_packages() {
-  install_packages $PACKAGES_BASIC
+  install_packages "$PACKAGES_BASIC"
   echo "-- Basic packages installed correctly"
+  install_packages "$PACKAGES_DEV_DEPS"
+  echo "-- Development packages installed correctly"
 }
 
 function install_extra_packages() {
-  install_packages $PACKAGES_EXTRA
+  install_packages "$PACKAGES_EXTRA"
   echo "-- Extra packages installed correctly"
 }
 
 function install_packages() {
   local packages=$1
-  local os_release=$(cat /etc/os-release | grep -e "^NAME=.*$" | sed 's/NAME=\(.*\)/\1/g')
+  local os_release=$(cat /etc/os-release | grep -e "^NAME=.*$" | sed 's/NAME=\(.*\)/\1/g' | sed 's/\"//g')
 
   case $os_release in
     "Fedora"|"Fedora Linux")
       echo "-- Installing packages"
-      sudo dnf install -y --quiet $packages ;;
+      sudo dnf install -y --quiet $packages 2>&1 ;;
     *) echo "Unsuported Linux Dist: $os_release" ;;
   esac
 }
@@ -144,9 +147,10 @@ function install_suckless_packages() {
 
 function install_suckless_dmenu() {
   local dmenu_dir=$SCRIPTPATH/suckless/dmenu
+
+  [[ -d $dmenu_dir/build ]] && { rm -Rf $dmenu_dir/build ; }
   create_dir $dmenu_dir/build
 
-  [[ -d $dmenu_dir/build ]] && { rm -Rf $dmenu_dir/build/* ; }
   git clone $SUCKLESS_GIT_URL/dmenu  $dmenu_dir/build 2>&1
   cd $dmenu_dir/build
   git apply ../patches/dmenu-highlight-20201211-fcdc159.diff
@@ -161,9 +165,10 @@ function install_suckless_dmenu() {
 
 function install_suckless_st() {
   local st_dir=$SCRIPTPATH/suckless/st
+
+  [[ -d $st_dir/build ]] && { rm -Rf $st_dir/build ; }
   create_dir $st_dir/build
 
-  [[ -d $st_dir/build ]] && { rm -Rf $st_dir/build/* ; }
   git clone $SUCKLESS_GIT_URL/st $st_dir/build 2>&1
   cd $st_dir/build
   git apply ../patches/st-blinking_cursor-20230819-3a6d6d7.diff
