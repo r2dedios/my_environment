@@ -10,7 +10,7 @@ RUN_DATE="$(date +%s)"
 CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 
 # Install Packages
-PACKAGES_BASIC="vim git tmux curl wget gcc make surf fontawesome-fonts-all"
+PACKAGES_BASIC="vim git tmux curl wget gcc make surf fontawesome-fonts-all libX11-devel"
 PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular i3blocks i3status dunst"
 
 # Suckless software configs
