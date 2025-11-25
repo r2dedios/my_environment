@@ -160,6 +160,20 @@ function install_suckless_dmenu() {
 }
 
 function install_suckless_st() {
+  local st_dir=$SCRIPTPATH/suckless/st
+  create_dir $st_dir/build
+
+  [[ -d $st_dir/build ]] && { rm -Rf $st_dir/build/* ; }
+  git clone $SUCKLESS_GIT_URL/st $st_dir/build 2>&1
+  cd $st_dir/build
+  git apply ../patches/st-blinking_cursor-20230819-3a6d6d7.diff
+  git apply ../patches/st-dynamic-cursor-color-0.9.diff
+  git apply ../patches/st-expected-anysize-0.9.diff
+  make
+  cp st $DEST_USER_HOME_DIR/.local/bin
+  make clean
+  cd -
+
   echo "-- Installed custom Suckless ST"
 }
 
