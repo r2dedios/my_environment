@@ -7,12 +7,14 @@ LOG_FILE="$(mktemp --suffix=-avillega-env-log)"
 modules=()
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 RUN_DATE="$(date +%s)"
-
 CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 
 # Install Packages
-PACKAGES_BASIC="vim git tmux curl wget"
+PACKAGES_BASIC="vim git tmux curl wget gcc make"
 PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular i3blocks i3status dunst"
+
+# Suckless software configs
+SUCKLESS_GIT_URL="https://git.suckless.org/"
 
 # Auxiliar function to backup dotfiles. Use absolut paths to avoid errors
 function backup_file() {
@@ -33,6 +35,13 @@ function link_file() {
   chown -h $DEST_USER:$DEST_USER $dest
 }
 
+function create_dir() {
+  local dir=$1
+
+  mkdir -p $dir
+  chown $DEST_USER:$DEST_USER $dir
+}
+
 # Install Bash config
 function install_bash_config() {
   backup_file $DEST_USER_HOME_DIR/.bash_profile
@@ -46,7 +55,7 @@ function install_bash_config() {
 
 # Install Bash k8s aliases
 function init_bash_custom_alias() {
-  mkdir -p $CUSTOM_ALIASES_PATH
+  create_dir $CUSTOM_ALIASES_PATH
   chown $DEST_USER:$DEST_USER $CUSTOM_ALIASES_PATH
 }
 
@@ -62,7 +71,7 @@ function install_vim_config() {
   link_file vim_config/vimrc $DEST_USER_HOME_DIR/.vimrc
   echo "-- Installed ViM config for user: '$DEST_USER'"
 
-  mkdir -p $DEST_USER_HOME_DIR/.vim/bundle
+  create_dir $DEST_USER_HOME_DIR/.vim/bundle
   curl -L -s -o /tmp/vundle.zip https://github.com/VundleVim/Vundle.vim/archive/refs/heads/master.zip 2>&1
   unzip -o -q /tmp/vundle.zip -d /tmp
   rm -Rf $DEST_USER_HOME_DIR/.vim/bundle/Vundle.vim
@@ -70,7 +79,7 @@ function install_vim_config() {
   rm /tmp/vundle.zip
   echo "-- Installed Vundle ViM package manager"
 
-  mkdir -p $DEST_USER_HOME_DIR/.vim/colors
+  create_dir $DEST_USER_HOME_DIR/.vim/colors
   link_file vim_config/color_schemes/villegas.vim $DEST_USER_HOME_DIR/.vim/colors/villegas.vim
   echo "-- Installed Vundle ViM color schemes"
 
@@ -79,13 +88,13 @@ function install_vim_config() {
 }
 
 function install_i3wm_config() {
-  mkdir -p $DEST_USER_HOME_DIR/.config/i3
+  create_dir $DEST_USER_HOME_DIR/.config/i3
 
   backup_file $DEST_USER_HOME_DIR/.config/i3/config
   link_file i3wm_config/i3wm_config $DEST_USER_HOME_DIR/.config/i3/config
   echo "-- Installed i3wm config"
 
-  mkdir -p $DEST_USER_HOME_DIR/.config/i3/i3status
+  create_dir $DEST_USER_HOME_DIR/.config/i3/i3status
   link_file i3wm_config/i3blocks_top_bar.conf $DEST_USER_HOME_DIR/.config/i3/top_bar.conf
   link_file i3wm_config/i3status_bottom_bar.conf $DEST_USER_HOME_DIR/.config/i3/bottom_bar.conf
   echo "-- Installed i3status config"
@@ -117,7 +126,7 @@ function install_packages() {
 }
 
 function install_dunst_config() {
-  mkdir -p $DEST_USER_HOME_DIR/.config/dunst
+  create_dir $DEST_USER_HOME_DIR/.config/dunst
 
   backup_file $DEST_USER_HOME_DIR/.config/dunst/dunstrc
   link_file dunst_config/dunstrc $DEST_USER_HOME_DIR/.config/dunst/dunstrc
@@ -125,7 +134,29 @@ function install_dunst_config() {
 }
 
 function install_suckless_packages() {
+  install_suckless_dmenu
+  install_suckless_st
+
   echo "-- Installed Suckless Software components"
+}
+
+function install_suckless_dmenu() {
+  create_dir $SCRIPTPATH/suckless/dmenu/build
+  git clone $SUCKLESS_GIT_URL/dmenu $SCRIPTPATH/suckless/dmenu/build
+  cd $SCRIPTPATH/suckless/dmenu/build
+  git apply ../patches/dmenu-highlight-20201211-fcdc159.diff
+  git apply ../patches/dmenu-center-20250407-b1e217b.diff
+
+  make
+  create_dir $DEST_USER_HOME_DIR/.local/bin
+  cp dmenu $DEST_USER_HOME_DIR/.local/bin
+  make clean
+
+  echo "-- Installed custom Suckless Dmenu"
+}
+
+function install_suckless_st() {
+  echo "-- Installed custom Suckless ST"
 }
 
 function select_target_user() {
@@ -192,7 +223,7 @@ options=(
   4 "ViM" on
   5 "i3wm" on
   6 "dunst" on
-  7 "Suckless software tools" off
+  7 "Suckless software tools (Requires: git, make, gcc)" off
   8 "Extra Packages (require sudo)" off
 )
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
