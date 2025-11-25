@@ -249,7 +249,7 @@ for_window [class="^.*"] border pixel 0
 for_window [class="Yad"] floating enable
 
 
-bindsym Mod1+BackSpace exec ~/.config/i3/scripts/i3lock/lock
+bindsym Mod1+BackSpace exec i3lock --color 550000
 
 set $session " Lock(l)     Exit(e)     Reboot(r)     Poweroff(p)     Suspend(s)"
 mode $session {
