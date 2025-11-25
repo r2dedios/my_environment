@@ -142,7 +142,9 @@ function install_suckless_packages() {
 
 function install_suckless_dmenu() {
   create_dir $SCRIPTPATH/suckless/dmenu/build
-  git clone $SUCKLESS_GIT_URL/dmenu $SCRIPTPATH/suckless/dmenu/build
+
+  [[ -d $SCRIPTPATH/suckless/dmenu/build ]] && { rm -Rf $SCRIPTPATH/suckless/dmenu/build ; }
+  git clone $SUCKLESS_GIT_URL/dmenu $SCRIPTPATH/suckless/dmenu/build 2>&1
   cd $SCRIPTPATH/suckless/dmenu/build
   git apply ../patches/dmenu-highlight-20201211-fcdc159.diff
   git apply ../patches/dmenu-center-20250407-b1e217b.diff
