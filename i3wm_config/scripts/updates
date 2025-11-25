@@ -17,8 +17,6 @@ case "$rc" in
         ;;
     100)
         # Updates available – parse the output
-        # Ejemplo de línea de paquete:
-        # azure-cli.x86_64  2.38.2-1.el7  azure-cli
         count=$(printf "%s\n" "$output" | grep -v '^[[:space:]]*$' | wc -l)
         ;;
     *)
@@ -33,9 +31,10 @@ if [ "$count" -eq 0 ]; then
 		icon=""
 elif [ "$count" -lt 20 ]; then
 		icon=""
-    COLOR="#ECE900"       # amarillo
+    COLOR="#ECE900"
 else
-    COLOR="#EC2929"       # rojo
+		icon=""
+    COLOR="#EC2929"
 fi
 
 
