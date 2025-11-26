@@ -12,7 +12,7 @@ CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 # Install Packages
 PACKAGES_BASIC="vim git tmux curl wget gcc make surf i3blocks i3status dunst fontawesome-fonts-all"
 PACKAGES_DEV_DEPS="@development-tools libX11-devel libXft-devel libXext-devel fontconfig-devel freetype-devel libXinerama-devel"
-PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular"
+PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular ranger tabbed"
 
 # Suckless software configs
 SUCKLESS_GIT_URL="https://git.suckless.org/"
