@@ -10,9 +10,9 @@ RUN_DATE="$(date +%s)"
 CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 
 # Install Packages
-PACKAGES_BASIC="vim git tmux curl wget gcc make surf fontawesome-fonts-all"
+PACKAGES_BASIC="vim git tmux curl wget gcc make surf i3blocks i3status dunst fontawesome-fonts-all"
 PACKAGES_DEV_DEPS="@development-tools libX11-devel libXft-devel libXext-devel fontconfig-devel freetype-devel libXinerama-devel"
-PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular i3blocks i3status dunst"
+PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular"
 
 # Suckless software configs
 SUCKLESS_GIT_URL="https://git.suckless.org/"
@@ -60,6 +60,7 @@ function init_bash_custom_alias() {
   chown $DEST_USER:$DEST_USER $CUSTOM_ALIASES_PATH
 }
 
+# Install k8s/OCP alias
 function install_bash_k8s_alias() {
   init_bash_custom_alias
   link_file bash_config/bash_k8s_alias $CUSTOM_ALIASES_PATH/bash_k8s_alias
@@ -88,6 +89,7 @@ function install_vim_config() {
   echo "-- Installed ViM packages"
 }
 
+# Install i3wm config and scripts
 function install_i3wm_config() {
   create_dir $DEST_USER_HOME_DIR/.config/i3
 
@@ -104,18 +106,25 @@ function install_i3wm_config() {
   echo "-- Installed i3wm scripts"
 }
 
+# Install basic packages
 function install_basic_packages() {
   install_packages "$PACKAGES_BASIC"
   echo "-- Basic packages installed correctly"
+}
+
+# Install Development packages and tools
+function install_development_packages() {
   install_packages "$PACKAGES_DEV_DEPS"
   echo "-- Development packages installed correctly"
 }
 
+# Install Extra packages (Optional)
 function install_extra_packages() {
   install_packages "$PACKAGES_EXTRA"
   echo "-- Extra packages installed correctly"
 }
 
+# Genering install packages function by OS type
 function install_packages() {
   local packages=$1
   local os_release=$(cat /etc/os-release | grep -e "^NAME=.*$" | sed 's/NAME=\(.*\)/\1/g' | sed 's/\"//g')
@@ -128,6 +137,7 @@ function install_packages() {
   esac
 }
 
+# Install dunst configuration (notifications)
 function install_dunst_config() {
   create_dir $DEST_USER_HOME_DIR/.config/dunst
 
@@ -136,6 +146,7 @@ function install_dunst_config() {
   echo "-- Installed dunst config"
 }
 
+# Global function for installing suckless components
 function install_suckless_packages() {
   create_dir $DEST_USER_HOME_DIR/.local/bin
 
@@ -145,6 +156,7 @@ function install_suckless_packages() {
   echo "-- Installed Suckless Software components"
 }
 
+# Install suckless dmenu with patches
 function install_suckless_dmenu() {
   local dmenu_dir=$SCRIPTPATH/suckless/dmenu
 
@@ -163,6 +175,7 @@ function install_suckless_dmenu() {
   echo "-- Installed custom Suckless Dmenu"
 }
 
+# Install suckless st (Simple Terminal) with patches
 function install_suckless_st() {
   local st_dir=$SCRIPTPATH/suckless/st
 
@@ -182,6 +195,7 @@ function install_suckless_st() {
   echo "-- Installed custom Suckless ST"
 }
 
+# Lists and let the user to choose the system user to install the configs
 function select_target_user() {
 	# Getting user list with UID >= 1000
   local users
@@ -215,6 +229,7 @@ function select_target_user() {
 	DEST_USER="$selected"
 }
 
+# Main installation function
 function install() {
   DEST_USER_HOME_DIR="$(getent passwd "$DEST_USER" | cut -d: -f6)"
 	CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
@@ -223,6 +238,7 @@ function install() {
   for module in ${modules[@]}; do
     case $module in
       basic_packages) install_basic_packages ;;
+      development_packages) install_development_packages ;;
       bash) install_bash_config ;;
       k8s_alias) install_bash_k8s_alias ;;
       vim) install_vim_config ;;
@@ -240,14 +256,15 @@ select_target_user
 
 cmd=(dialog --title "Alejandro Villegas configuration installer" --separate-output --checklist "Select components to install (target user: $DEST_USER):" 22 76 16)
 options=(
-  1 "Basic Packages" on
-  2 "Bash" on
-  3 "Bash K8s/OCP aliases" on
-  4 "ViM" on
-  5 "i3wm" on
-  6 "dunst" on
-  7 "Suckless software tools (Requires: git, make, gcc)" off
-  8 "Extra Packages (require sudo)" off
+  1 "Basic Packages (Requires sudo)" on
+  2 "Development Packages (Requires sudo)" on
+  3 "Bash custom config" on
+  4 "Bash custom aliases" on
+  5 "ViM" on
+  6 "i3wm" on
+  7 "dunst" on
+  8 "Suckless software tools (Requires: git, make, gcc and 'Development packages')" on
+  9 "Extra Packages (Requires sudo)" off
 )
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 [[ $? -eq 1 ]] && { dialog --title "Aborted" --msgbox "Installation Aborted" 7 80; clear; exit; }
@@ -258,13 +275,14 @@ for choice in $choices
 do
   case $choice in
     1) modules+=("basic_packages") ;;
-    2) modules+=("bash") ;;
-    3) modules+=("k8s_alias") ;;
-    4) modules+=("vim") ;;
-    5) modules+=("i3wm") ;;
-    6) modules+=("dunst") ;;
-    7) modules+=("suckless") ;;
-    8) modules+=("extra") ;;
+    2) modules+=("development_packages") ;;
+    3) modules+=("bash") ;;
+    4) modules+=("k8s_alias") ;;
+    5) modules+=("vim") ;;
+    6) modules+=("i3wm") ;;
+    7) modules+=("dunst") ;;
+    8) modules+=("suckless") ;;
+    9) modules+=("extra") ;;
   esac
 done
 
