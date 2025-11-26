@@ -187,6 +187,7 @@ function install_suckless_st() {
   git apply ../patches/st-blinking_cursor-20230819-3a6d6d7.diff
   git apply ../patches/st-dynamic-cursor-color-0.9.diff
   git apply ../patches/st-expected-anysize-0.9.diff
+  git apply ../patches/st-tmux.diff
   make
   cp st $DEST_USER_HOME_DIR/.local/bin
   make clean
