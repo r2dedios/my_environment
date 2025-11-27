@@ -21,7 +21,7 @@ export GO111MODULE="on"
 
 
 # PATH extensions
-export PATH="$PATH:$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$HOME/.istioctl/bin"
 export PATH="$PATH:$HOME/go/bin"
 export PATH="$PATH:/usr/share/git-core/contrib"
