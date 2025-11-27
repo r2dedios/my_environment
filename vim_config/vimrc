@@ -321,7 +321,7 @@ hi notesRule       term=NONE  cterm=NONE  ctermbg=0     ctermfg=13
 " notesModeLine  xxx links to LineNr
 " notesLastEdited xxx links to LineNr
 let g:notes_suffix = '.vnote'
-let g:notes_directories = ['~/work/redhat/vim-notes']
+let g:notes_directories = ['~/work/vim-notes']
 
 
 
