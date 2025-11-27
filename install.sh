@@ -10,8 +10,8 @@ RUN_DATE="$(date +%s)"
 CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 
 # Install Packages
-PACKAGES_BASIC="vim git tmux curl wget gcc make surf i3blocks i3status dunst fontawesome-fonts-all"
-PACKAGES_DEV_DEPS="@development-tools libX11-devel libXft-devel libXext-devel fontconfig-devel freetype-devel libXinerama-devel"
+PACKAGES_BASIC="vim git tmux curl wget gcc make surf i3blocks i3status dunst fontawesome-fonts-all kpcli"
+PACKAGES_DEV_DEPS="@development-tools libX11-devel libXft-devel libXext-devel fontconfig-devel freetype-devel libXinerama-devel webkit2gtk4.1-devel gcr3-devel"
 PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular ranger tabbed"
 
 # Suckless software configs
@@ -86,6 +86,8 @@ function install_vim_config() {
   echo "-- Installed Vundle ViM color schemes"
 
   vim -E -s +PluginInstall +qall
+  vim -E -s +BundleUpdate +qall
+
   echo "-- Installed ViM packages"
 }
 
@@ -152,6 +154,7 @@ function install_suckless_packages() {
 
   install_suckless_dmenu
   install_suckless_st
+  install_suckless_surf
 
   echo "-- Installed Suckless Software components"
 }
@@ -167,8 +170,8 @@ function install_suckless_dmenu() {
   cd $dmenu_dir/build
   git apply ../patches/dmenu-highlight-20201211-fcdc159.diff
   git apply ../patches/dmenu-center-20250407-b1e217b.diff
-  make
-  cp dmenu $DEST_USER_HOME_DIR/.local/bin
+  make 2>&1
+  make install
   make clean
   cd -
 
@@ -188,12 +191,32 @@ function install_suckless_st() {
   git apply ../patches/st-dynamic-cursor-color-0.9.diff
   git apply ../patches/st-expected-anysize-0.9.diff
   git apply ../patches/st-tmux.diff
-  make
+  make 2>&1
   cp st $DEST_USER_HOME_DIR/.local/bin
   make clean
   cd -
 
   echo "-- Installed custom Suckless ST"
+}
+
+# Install suckless surf with patches
+function install_suckless_surf() {
+  local surf_dir=$SCRIPTPATH/suckless/surf
+
+  [[ -d $surf_dir/build ]] && { rm -Rf $surf_dir/build ; }
+  create_dir $surf_dir/build
+
+  git clone https://github.com/mrdotx/surf.git $surf_dir/build 2>&1
+  cd $surf_dir/build
+  make 2>&1
+  create_dir $DEST_USER_HOME_DIR/.config/surf
+  cp $surf_dir/bookmarks $DEST_USER_HOME_DIR/.config/surf/
+  chown -R $DEST_USER:$DEST_USER $DEST_USER_HOME_DIR/.config/surf
+  make install
+  make clean
+  cd -
+
+  echo "-- Installed custom Suckless Surf"
 }
 
 # Lists and let the user to choose the system user to install the configs
