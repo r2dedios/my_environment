@@ -1,14 +1,14 @@
 #!/bin/bash
-# Displays the default device, volume, and mute status for i3blocks
+# Displays the default *input* device (microphone), volume, and mute status for i3blocks
 
 set -a
 
-AUDIO_HIGH_SYMBOL=${AUDIO_HIGH_SYMBOL:-''}
+AUDIO_HIGH_SYMBOL=${AUDIO_HIGH_SYMBOL:-'🎙'}
 AUDIO_MED_THRESH=${AUDIO_MED_THRESH:-50}
-AUDIO_MED_SYMBOL=${AUDIO_MED_SYMBOL:-''}
+AUDIO_MED_SYMBOL=${AUDIO_MED_SYMBOL:-'🎙'}
 AUDIO_LOW_THRESH=${AUDIO_LOW_THRESH:-0}
-AUDIO_LOW_SYMBOL=${AUDIO_LOW_SYMBOL:-''}
-AUDIO_MUTED_SYMBOL=${AUDIO_MUTED_SYMBOL:-''}
+AUDIO_LOW_SYMBOL=${AUDIO_LOW_SYMBOL:-'🎙'}
+AUDIO_MUTED_SYMBOL=${AUDIO_MUTED_SYMBOL:-'🎙'}
 
 AUDIO_DELTA=${AUDIO_DELTA:-5}
 
@@ -41,28 +41,28 @@ fi
 CAPABILITY=$(amixer -D $MIXER get $SCONTROL | sed -n "s/  Capabilities:.*cvolume.*/Capture/p")
 
 
-function move_sinks_to_new_default {
-    DEFAULT_SINK=$1
-    pactl list sink-inputs | grep index: | grep -o '[0-9]\+' | while read SINK
+function move_sources_to_new_default {
+    DEFAULT_SOURCE=$1
+    pactl list source-outputs | grep index: | grep -o '[0-9]\+' | while read SRC_OUT
     do
-        pacmd move-sink-input $SINK $DEFAULT_SINK
+        pacmd move-source-output "$SRC_OUT" "$DEFAULT_SOURCE"
     done
 }
 
-function set_default_playback_device_next {
+function set_default_capture_device_next {
     inc=${1:-1}
-    num_devices=$(pactl list sinks | grep -c "Sink #")
-    sink_arr=($(pactl list sinks | grep "Sink #" | grep -o '[0-9]\+'))
-    default_sink_index=$(pactl list sinks short | grep $(pactl info | grep "Default Sink" | cut -d" " -f 3) | cut -f 1)
-    for i in "${!sink_arr[@]}"; do
-        if [[ "${sink_arr[$i]}" = "${default_sink_index}" ]]; then
-          default_sink_index=${sink_arr[$(($(($i+1))%$num_devices))]}
+    num_devices=$(pactl list sources | grep -c "Source #")
+    source_arr=($(pactl list sources | grep "Source #" | grep -o '[0-9]\+'))
+    default_source_index=$(pactl list sources short | grep "$(pactl info | grep "Default Source" | cut -d" " -f 3)" | cut -f 1)
+    for i in "${!source_arr[@]}"; do
+        if [[ "${source_arr[$i]}" = "${default_source_index}" ]]; then
+          default_source_index=${source_arr[$(( (i+1) % num_devices ))]}
           break
         fi
     done
 
-    pactl set-default-sink $default_sink_index
-    move_sinks_to_new_default $default_sink
+    pactl set-default-source "$default_source_index"
+    move_sources_to_new_default "$default_source_index"
 }
 
 function switch_format {
@@ -75,10 +75,10 @@ function switch_format {
 
 case "$BLOCK_BUTTON" in
     1) switch_format $1 ;;
-    2) pactl set-sink-mute @DEFAULT_SINK@ toggle ;;
-    3) set_default_playback_device_next ;;
-    4) pactl set-sink-volume @DEFAULT_SINK@ +$AUDIO_DELTA% ;;
-    5) pactl set-sink-volume @DEFAULT_SINK@ -$AUDIO_DELTA% ;;
+    2) pactl set-source-mute @DEFAULT_SOURCE@ toggle ;;
+    3) set_default_capture_device_next ;;
+    4) pactl set-source-volume @DEFAULT_SOURCE@ +$AUDIO_DELTA% ;;
+    5) pactl set-source-volume @DEFAULT_SOURCE@ -$AUDIO_DELTA% ;;
 esac
 
 function print_format {
@@ -86,7 +86,7 @@ function print_format {
 }
 
 function print_block {
-    ACTIVE=$(pactl list sinks | grep "Sink #$(pactl list sinks short | grep $(pactl info | grep "Default Sink" | cut -d" " -f 3) | cut -f 1)" -B1 -A50 | grep "alsa.card \|Description\|Volume: \(front\|mono\)\|Mute:")
+    ACTIVE=$(pactl list sources | grep "Source #$(pactl list sources short | grep "$(pactl info | grep "Default Source" | cut -d" " -f 3)" | cut -f 1)" -B1 -A50 | grep "alsa.card \|Description\|Volume: \(front\|mono\)\|Mute:")
     for name in NAME MUTED VOL INDEX; do
         read $name
     done < <(echo "$ACTIVE")
@@ -99,14 +99,14 @@ function print_block {
 's/.*/unknown/')
 
     if [[ $USE_ALSA_NAME == 1 ]] ; then
-        ALSA_NAME=$(pactl list sinks |\
+        ALSA_NAME=$(pactl list sources |\
 awk '/^\s*\*/{f=1}/^\s*index:/{f=0}f' |\
 grep "alsa.name\|alsa.mixer_name" |\
 head -n1 |\
 sed 's/.*= "\(.*\)".*/\1/')
         NAME=${ALSA_NAME:-$NAME}
     elif [[ $USE_DESCRIPTION == 1 ]] ; then
-        DESCRIPTION=$(pactl list sinks |\
+        DESCRIPTION=$(pactl list sources |\
 awk '/^\s*\*/{f=1}/^\s*index:/{f=0}f' |\
 grep "device.description" |\
 head -n1 |\

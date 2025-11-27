@@ -1,0 +1,43 @@
+#!/bin/sh
+# Minimal DNF updates checker for i3blocks.
+# Output: "UPD: N" where N is the number of upgradable packages.
+
+# Run dnf check-update with a timeout to avoid hangs
+timeout=10s
+output=$(timeout $timeout dnf -q check-update 2>/dev/null)
+rc=$?
+
+count=0
+
+case "$rc" in
+    0)
+        # No updates
+				icon=""
+        count=0
+        ;;
+    100)
+        # Updates available – parse the output
+        count=$(printf "%s\n" "$output" | grep -v '^[[:space:]]*$' | wc -l)
+        ;;
+    *)
+        # dnf error
+        printf "UPD: ?\n"
+        exit 0
+        ;;
+esac
+
+# Decide color for i3blocks
+if [ "$count" -eq 0 ]; then
+		icon=""
+elif [ "$count" -lt 20 ]; then
+		icon=""
+    COLOR="#ECE900"
+else
+		icon=""
+    COLOR="#EC2929"
+fi
+
+
+printf "$icon : %s\n" "$count"
+printf "\n"
+printf "%s\n" "$COLOR"

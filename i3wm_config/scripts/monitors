@@ -1,0 +1,12 @@
+#!/bin/sh
+# Simple i3blocks module to open arandr on click.
+
+ICON=""
+
+# Left click opens arandr
+case "$BLOCK_BUTTON" in
+    1) ~/.config/i3/scripts/monitor_menu & ;;
+esac
+
+printf "%s\n" "$ICON"
+

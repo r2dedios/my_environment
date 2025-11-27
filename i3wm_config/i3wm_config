@@ -15,7 +15,7 @@
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:Source Code Pro, FontAwesome:style=Regular 12
+font pango:Source Code Pro, FontAwesome:style=Regular 10
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
@@ -209,7 +209,7 @@ client.background       #FFFFFF
 # TOP BAR
 bar {
   position       top
-  status_command i3blocks -c ~/.config/i3/i3blocks_config_top
+  status_command i3blocks -c ~/.config/i3/top_bar.conf
   tray_output    primary
 
   colors {
@@ -227,14 +227,15 @@ bar {
 
 # BOTTOM BAR
 bar {
+  id                bottom_bar
   position          bottom
-  status_command    i3blocks -c ~/.config/i3/i3blocks_config_bottom
+  status_command    i3status --config ~/.config/i3/bottom_bar.conf
   workspace_buttons no
   tray_output       none
 
   colors {
     background #111111
-    statusline #FFFFFF
+    statusline #00FF00
     separator  #666666
   }
 }
@@ -248,7 +249,7 @@ for_window [class="^.*"] border pixel 0
 for_window [class="Yad"] floating enable
 
 
-bindsym Mod1+BackSpace exec ~/.config/i3/scripts/i3lock/lock
+bindsym Mod1+BackSpace exec i3lock --color 550000
 
 set $session " Lock(l)     Exit(e)     Reboot(r)     Poweroff(p)     Suspend(s)"
 mode $session {
@@ -284,10 +285,6 @@ workspace $ws10 output $monitor_laptop
 for_window [window_role="^floating$"] floating enable workspace $ws3
 # Mute Mic
 bindcode 206 exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
-bindsym XF86WebCam      exec /home/avillega/work/github/my_environment/custom_keyboard/decrease-bright.sh
-bindsym XF86AudioPreset exec /home/avillega/work/github/my_environment/custom_keyboard/increase-bright.sh
-bindsym XF86Finance     exec /home/avillega/work/github/my_environment/custom_keyboard/config-screens.sh
-bindsym XF86Game        exec /home/avillega/work/github/my_environment/custom_keyboard/config-workspaces.sh
 bindsym XF86Launch1 exec i3-msg workspace $ws1;  exec --no-startup-id st
 bindsym XF86Launch2 exec i3-msg workspace $ws1;  exec --no-startup-id google-chrome --profile-directory="Default"
 bindsym XF86Launch3 exec i3-msg workspace $ws3;  exec --no-startup-id slack
