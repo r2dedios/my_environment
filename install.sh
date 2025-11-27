@@ -12,7 +12,9 @@ CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 # Install Packages
 PACKAGES_BASIC="vim git tmux curl wget gcc make surf i3blocks i3status dunst fontawesome-fonts-all kpcli"
 PACKAGES_DEV_DEPS="@development-tools libX11-devel libXft-devel libXext-devel fontconfig-devel freetype-devel libXinerama-devel webkit2gtk4.1-devel gcr3-devel"
-PACKAGES_EXTRA="tree ack jq yq fzf htop flameshot okular ranger tabbed"
+PACKAGES_EXTRA_TOOLS="tree ack jq yq fzf htop flameshot okular ranger tabbed"
+PACKAGES_DEV_TOOLS="go"
+PACKAGES_CONTAINERS="podman podman-compose helm kustomize buildah skopeo"
 
 # Suckless software configs
 SUCKLESS_GIT_URL="https://git.suckless.org/"
@@ -117,13 +119,25 @@ function install_basic_packages() {
 # Install Development packages and tools
 function install_development_packages() {
   install_packages "$PACKAGES_DEV_DEPS"
-  echo "-- Development packages installed correctly"
+  echo "-- Development deps packages installed correctly"
 }
 
 # Install Extra packages (Optional)
 function install_extra_packages() {
-  install_packages "$PACKAGES_EXTRA"
+  install_packages "$PACKAGES_EXTRA_TOOLS"
   echo "-- Extra packages installed correctly"
+}
+
+# Install Container tools packages (Optional)
+function install_container_tools_packages() {
+  install_packages "$PACKAGES_CONTAINERS"
+  echo "-- Container tools packages installed correctly"
+}
+
+# Install Developer packages (Optional)
+function install_developer_packages() {
+  install_packages "$PACKAGES_DEV_TOOLS"
+  echo "-- Developer packages installed correctly"
 }
 
 # Genering install packages function by OS type
@@ -262,14 +276,16 @@ function install() {
   for module in ${modules[@]}; do
     case $module in
       basic_packages) install_basic_packages ;;
-      development_packages) install_development_packages ;;
+      dev_deps_packages) install_development_packages ;;
       bash) install_bash_config ;;
       k8s_alias) install_bash_k8s_alias ;;
       vim) install_vim_config ;;
       i3wm) install_i3wm_config ;;
       dunst) install_dunst_config ;;
       suckless) install_suckless_packages ;;
-      extra) install_extra_packages ;;
+      extra_packages) install_extra_packages ;;
+      containers_packages) install_container_tools_packages ;;
+      developer_packages) install_developer_packages ;;
       *) echo "-- Missing module: '$module'"; sleep 1 ;;
     esac
   done 2>&1 >> $LOG_FILE
@@ -281,14 +297,16 @@ select_target_user
 cmd=(dialog --title "Alejandro Villegas configuration installer" --separate-output --checklist "Select components to install (target user: $DEST_USER):" 22 76 16)
 options=(
   1 "Basic Packages (Requires sudo)" on
-  2 "Development Packages (Requires sudo)" on
+  2 "Dev Dependencies Packages (For building suckless ; Requires sudo)" on
   3 "Bash custom config" on
   4 "Bash custom aliases" on
   5 "ViM" on
   6 "i3wm" on
   7 "dunst" on
-  8 "Suckless software tools (Requires: git, make, gcc and 'Development packages')" on
+  8 "Suckless software tools (Requires: 'Development packages')" on
   9 "Extra Packages (Requires sudo)" off
+  10 "Container tools Packages (Requires sudo)" off
+  11 "Developer Packages (Requires sudo)" off
 )
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 [[ $? -eq 1 ]] && { dialog --title "Aborted" --msgbox "Installation Aborted" 7 80; clear; exit; }
@@ -299,14 +317,16 @@ for choice in $choices
 do
   case $choice in
     1) modules+=("basic_packages") ;;
-    2) modules+=("development_packages") ;;
+    2) modules+=("dev_deps_packages") ;;
     3) modules+=("bash") ;;
     4) modules+=("k8s_alias") ;;
     5) modules+=("vim") ;;
     6) modules+=("i3wm") ;;
     7) modules+=("dunst") ;;
     8) modules+=("suckless") ;;
-    9) modules+=("extra") ;;
+    9) modules+=("extra_packages") ;;
+    10) modules+=("containers_packages") ;;
+    11) modules+=("developer_packages") ;;
   esac
 done
 
