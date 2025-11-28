@@ -10,9 +10,9 @@ RUN_DATE="$(date +%s)"
 CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 
 # Install Packages
-PACKAGES_BASIC="vim git tmux curl wget gcc make surf i3blocks i3status dunst fontawesome-fonts-all kpcli NetworkManager-openvpn-gnome"
+PACKAGES_BASIC="vim git tmux curl wget gcc make surf i3blocks i3status dunst fontawesome-fonts-all kpcli NetworkManager-openvpn-gnome yad"
 PACKAGES_DEV_DEPS="@development-tools libX11-devel libXft-devel libXext-devel fontconfig-devel freetype-devel libXinerama-devel webkit2gtk4.1-devel gcr3-devel"
-PACKAGES_EXTRA_TOOLS="tree ack jq yq fzf htop flameshot okular ranger tabbed"
+PACKAGES_EXTRA_TOOLS="tree ack jq yq fzf htop flameshot okular ranger tabbed xclip evtest"
 PACKAGES_DEV_TOOLS="go"
 PACKAGES_CONTAINERS="podman podman-compose helm kustomize buildah skopeo"
 
@@ -205,8 +205,9 @@ function install_suckless_st() {
   git apply ../patches/st-dynamic-cursor-color-0.9.diff
   git apply ../patches/st-expected-anysize-0.9.diff
   git apply ../patches/st-tmux.diff
+  git apply ../patches/st-font-size.diff
   make 2>&1
-  cp st $DEST_USER_HOME_DIR/.local/bin
+  make install
   make clean
   cd -
 
@@ -296,14 +297,14 @@ select_target_user
 
 cmd=(dialog --title "Alejandro Villegas configuration installer" --separate-output --checklist "Select components to install (target user: $DEST_USER):" 22 76 16)
 options=(
-  1 "Basic Packages (Requires sudo)" on
-  2 "Dev Dependencies Packages (For building suckless ; Requires sudo)" on
-  3 "Bash custom config" on
-  4 "Bash custom aliases" on
-  5 "ViM" on
-  6 "i3wm" on
-  7 "dunst" on
-  8 "Suckless software tools (Requires: 'Development packages')" on
+  1 "Basic Packages (Requires sudo)" off
+  2 "Dev Dependencies Packages (For building suckless ; Requires sudo)" off
+  3 "Bash custom config" off
+  4 "Bash custom aliases" off
+  5 "ViM" off
+  6 "i3wm" off
+  7 "dunst (Requires: Basic packages)" off
+  8 "Suckless software tools (Requires: 'Basic + Development packages')" off
   9 "Extra Packages (Requires sudo)" off
   10 "Container tools Packages (Requires sudo)" off
   11 "Developer Packages (Requires sudo)" off
