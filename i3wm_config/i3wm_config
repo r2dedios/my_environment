@@ -15,7 +15,7 @@
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:Source Code Pro, FontAwesome:style=Regular 10
+font pango:Source Code Pro, FontAwesome:style=Regular 12
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
@@ -265,10 +265,7 @@ mode $session {
 
 bindsym Mod1+Shift+s mode $session
 
-set $monitor_main "DP-3-1"
-set $monitor_sec "DP-1"
 set $monitor_laptop "eDP-1"
-
 workspace $ws1 output $monitor_main
 workspace $ws2 output $monitor_main
 workspace $ws3 output $monitor_sec
