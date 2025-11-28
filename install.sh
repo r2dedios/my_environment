@@ -13,7 +13,7 @@ CUSTOM_ALIASES_PATH=$DEST_USER_HOME_DIR/.bash_custom_alias
 PACKAGES_BASIC="vim git tmux curl wget gcc make surf i3blocks i3status dunst fontawesome-fonts-all kpcli NetworkManager-openvpn-gnome yad"
 PACKAGES_DEV_DEPS="@development-tools libX11-devel libXft-devel libXext-devel fontconfig-devel freetype-devel libXinerama-devel webkit2gtk4.1-devel gcr3-devel"
 PACKAGES_EXTRA_TOOLS="tree ack jq yq fzf htop flameshot okular ranger tabbed xclip evtest"
-PACKAGES_DEV_TOOLS="go"
+PACKAGES_DEV_TOOLS="go gh"
 PACKAGES_CONTAINERS="podman podman-compose helm kustomize buildah skopeo"
 
 # Suckless software configs
