@@ -49,6 +49,7 @@ set $right l
 
 # use Mouse+Mod1 to drag floating windows to their wanted position
 floating_modifier Mod1
+tiling_drag off
 
 # start a terminal
 bindsym Mod1+Return exec st
