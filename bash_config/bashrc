@@ -127,6 +127,7 @@ alias wifi_on='nmcli radio wifi on'
 alias wifi_off='nmcli radio wifi off'
 alias myip='dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com'
 alias copy='xclip -sel clip $1'
+alias tree='tree -a -pug --du -h'
 
 ## Develop alias
 alias superlinter='podman run --privileged -e RUN_LOCAL=true -e DEFAULT_BRANCH=main -e VALIDATE_MARKDOWN=true -e VALIDATE_NATURAL_LANGUAGE=true -v $PWD:/tmp/lint ghcr.io/super-linter/super-linter:latest'
