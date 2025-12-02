@@ -43,17 +43,45 @@ CAPABILITY=$(amixer -D $MIXER get $SCONTROL | sed -n "s/  Capabilities:.*cvolume
 
 function move_sinks_to_new_default {
     DEFAULT_SINK=$1
-    pactl list sink-inputs | grep index: | grep -o '[0-9]\+' | while read SINK
+    pactl list sink-inputs short | awk '{print $1}' | while read SINK
     do
-        pacmd move-sink-input $SINK $DEFAULT_SINK
+        pactl move-sink-input $SINK $DEFAULT_SINK 2>&1 >> /tmp/volume.log
     done
 }
 
 function set_default_playback_device_next {
     inc=${1:-1}
-    num_devices=$(pactl list sinks | grep -c "Sink #")
-    sink_arr=($(pactl list sinks | grep "Sink #" | grep -o '[0-9]\+'))
-    default_sink_index=$(pactl list sinks short | grep $(pactl info | grep "Default Sink" | cut -d" " -f 3) | cut -f 1)
+    mapfile -t sink_arr < <(pactl list sinks | awk '
+      /^Sink #[0-9]+/ {
+          if (id != "" && avail == "yes") print id
+          id = $2
+          sub(/^#/, "", id)
+          avail = "no"
+          next
+      }
+      /, not available\)/ {
+          avail = "no"
+          next
+      }
+      /, available\)/ {
+          avail = "yes"
+          next
+      }
+      /availability unknown/ {
+          avail = "yes"
+          next
+      }
+      END {
+          if (id != "" && avail == "yes") print id
+      }')
+
+    num_devices=${#sink_arr[@]}
+    default_sink_index=$(
+      pactl list sinks short \
+      | awk -v def="$(pactl info | awk -F': ' '/Default Sink/ {print $2}')" '
+           $2 == def {print $1}'
+    )
+
     for i in "${!sink_arr[@]}"; do
         if [[ "${sink_arr[$i]}" = "${default_sink_index}" ]]; then
           default_sink_index=${sink_arr[$(($(($i+1))%$num_devices))]}
@@ -62,7 +90,7 @@ function set_default_playback_device_next {
     done
 
     pactl set-default-sink $default_sink_index
-    move_sinks_to_new_default $default_sink
+    move_sinks_to_new_default $default_sink_index
 }
 
 function switch_format {
