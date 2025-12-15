@@ -52,7 +52,7 @@ hi  ColorColumn      ctermfg=none  ctermbg=234   cterm=none
 hi  LineNr           ctermfg=241   ctermbg=none  cterm=none
 hi  ExtraWhitespace  ctermfg=255   ctermbg=9     cterm=none
 hi  Search           ctermfg=0     ctermbg=184   cterm=none
-hi  MatchParen       ctermfg=0     ctermbg=76    cterm=none
+hi  MatchParen       ctermfg=160   ctermbg=8     cterm=none
 hi  VertSplit        ctermfg=240   ctermbg=234   cterm=none
 
 "   Coding
@@ -62,7 +62,7 @@ hi  Character        ctermfg=112   ctermbg=none  cterm=none
 hi  String           ctermfg=76   ctermbg=none  cterm=none
 hi  Type             ctermfg=70   ctermbg=none  cterm=bold
 hi  PreProc          ctermfg=76   ctermbg=none  cterm=none
-hi  Todo             ctermfg=0     ctermbg=202   cterm=none
+hi  Todo             ctermfg=0     ctermbg=202   cterm=bold
 hi  Keyword          ctermfg=172   ctermbg=none  cterm=bold
 hi  Define           ctermfg=171   ctermbg=none  cterm=none
 hi  Function         ctermfg=125   ctermbg=none  cterm=bold

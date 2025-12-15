@@ -10,7 +10,11 @@
 " ---------------------------------------------\
 " -- Basic Configs
 " -----------------------------------------------------------------------------\
+
+" Displays numberlines
 set nu
+
+" Enables syntax highlight
 syntax on
 
 " Spaces instead tabs
@@ -18,49 +22,41 @@ set expandtab
 set tabstop=2
 set shiftwidth=2
 
-" Colorcolum
+" Max line width
+set textwidth=0
+
+" Colorcolum (0=Disabled)
 set colorcolumn=0
 
 " Disable wrap lines
 set nowrap
+
+" Encoding
+set encoding=utf8
+
+" Refresh frequency (milliseconds)
+set updatetime=300
+
+" CursorLine config
+set cursorline
+set cursorlineopt=both    "number/line/both
+
+" Local Leader. Prefijo para mapeos en ciertos tipos de ficheros
+" Local Leader. Map prefix
+let maplocalleader = "\\"
 
 " Font for GUI
 if has("gui_running")
   set guifont=Noto_Mono_for_Powerline:h11
 endif
 
-" Encoding
-set encoding=utf8
-
-" Refresh frequency (milliseconds)
-set updatetime=200
-
-" Local Leader. Prefijo para mapeos en ciertos tipos de ficheros
-let maplocalleader = "\\"
-
-
-
-set background=dark
-set cursorline
-set cursorlineopt=number    "number/line/both
-
-" ---------------------------------------------\
-" -- Folding Configs
-" -----------------------------------------------------------------------------\
-" Fold Method by code indent
-set foldmethod=manual
-set foldlevel=99
-set foldcolumn=4
-
+" Places the local working dir where the file's buffer is
 autocmd BufEnter * lcd %:p:h
-map <leader>r :NERDTreeFind<cr>
-
-
 
 
 
 " ---------------------------------------------\
-" -- Searching Configs
+" -- Search Configs
 " -----------------------------------------------------------------------------\
 " Incremental search
 set incsearch
@@ -73,16 +69,12 @@ set ic
 
 
 
-
 " ---------------------------------------------\
 " -- Spelling Configs
 " -----------------------------------------------------------------------------\
 set nospell
 set spelllang=en
-set spellsuggest+=10
-" Open suggests menu:   z=
-" Add Word to dict: zg
-
+set spellsuggest=8
 
 
 
@@ -93,8 +85,36 @@ set spellsuggest+=10
 set pastetoggle=<F2>
 " Busca el texto seleccionado en modo visual
 vnoremap  // y/<C-R>"<CR>
-nmap <F8> :TagbarToggle<CR>
 nmap <F7> :NERDTreeToggle<CR>
+map <leader>r :NERDTreeFind<cr>
+
+
+
+" ---------------------------------------------\
+" -- Folding Configs
+" -----------------------------------------------------------------------------\
+" Fold Method by code indent
+set foldmethod=manual
+set foldlevel=99
+set foldcolumn=4
+
+
+
+" ---------------------------------------------\
+" -- File type specific configs
+" -----------------------------------------------------------------------------\
+"Aplica a las extensiones de los ficheros el coloreado de sintaxis "especificado
+au BufNewFile,BufRead *.org setlocal ft=org
+au BufNewFile,BufRead *.txt set spell tw=80 linebreak
+au BufNewFile,BufRead *.tex set spell tw=80 linebreak
+au BufNewFile,BufRead *.md  set spell tw=80 linebreak
+au BufNewFile,BufRead *.md  MarkdownPreview
+au BufNewFile,BufRead *.go  set ft=go foldmethod=syntax foldlevel=99 foldcolumn=4
+au BufNewFile,BufRead *.go  TagbarOpen
+au BufNewFile,BufRead *.h   set ft=c
+au BufNewFile,BufRead *.ign set ft=json
+au BufNewFile,BufRead *.bu  set ft=yaml
+au filetype go inoremap <buffer> . .<C-x><C-o>
 
 
 
@@ -118,17 +138,17 @@ call vundle#begin()
   Plugin 'iamcco/markdown-preview.nvim'       " Markdown viewer
   Plugin 'danro/rename.vim'                   " Rename opened buffers
   Plugin 'xolox/vim-misc'                     " Miscelanea
-  Plugin 'vim-latex/vim-latex'                " Latex languaje highlight
+  Plugin 'vim-latex/vim-latex'                " Latex highlight
   Plugin 'kshenoy/vim-signature'              " To display Marks
   Plugin 'will133/vim-dirdiff'                " Diff with two dirs
-  Plugin 'airblade/vim-gitgutter'             " Muestra los simbolos de cambios Git
-  Plugin 'majutsushi/tagbar'                  " Muestra las Tags en programacion
-  Plugin 'w0rp/ale'                           " Evalua la sintaxis del codigo
-  Plugin 'godlygeek/tabular'                  " Para tabular bloques de codigo
+  Plugin 'airblade/vim-gitgutter'             " Git changes displaying
+  Plugin 'majutsushi/tagbar'                  " Sidebar with tags, functions and types
+  Plugin 'w0rp/ale'                           " Syntax check
+  Plugin 'godlygeek/tabular'                  " Block code tabs
   Plugin 'elzr/vim-json'                      " JSON plugin
   Plugin 'vim-scripts/vcscommand.vim'         " VCS Command
-  Plugin 'fatih/vim-go'
-  Plugin 'crispydrone/vim-tasks'
+  Plugin 'fatih/vim-go'                       " GoLang plugin
+  Plugin 'crispydrone/vim-tasks'              " Tasks management
   Plugin 'xolox/vim-notes'                    " Vim notes
 call vundle#end()
 filetype plugin indent on
@@ -137,199 +157,11 @@ filetype plugin indent on
 
 
 " ---------------------------------------------\
-" -- Color Configs
+" -- Plugin Configuration
 " -----------------------------------------------------------------------------\
-"Colores xterm 256
-set t_Co=256
-colorscheme villegas
 
-
-" ---------------------------------------------\
-" -- File type specific configs
-" -----------------------------------------------------------------------------\
-"Aplica a las extensiones de los ficheros el coloreado de sintaxis "especificado
-au BufNewFile,BufRead *.org setlocal ft=org
-au BufNewFile,BufRead *.txt set spell tw=80 linebreak
-au BufNewFile,BufRead *.tex set spell tw=80 linebreak
-au BufNewFile,BufRead *.md  set spell tw=80 linebreak
-au BufNewFile,BufRead *.md  MarkdownPreview
-au BufNewFile,BufRead *.go  set ft=go foldmethod=syntax foldlevel=99 foldcolumn=4
-au BufNewFile,BufRead *.go  TagbarOpen
-au BufNewFile,BufRead *.h   set ft=c
-au BufNewFile,BufRead *.ign set ft=json
-au BufNewFile,BufRead *.bu  set ft=yaml
-
-au filetype go inoremap <buffer> . .<C-x><C-o>
-
-
-
-
-
-
-" ---------------------------------------------\
-" -- Highlight Config
-" -----------------------------------------------------------------------------\
-" https://jonasjacek.github.io/colors/
-
-" Basic Highlight
-hi  Normal      ctermfg=250      ctermbg=none  cterm=none
-hi  Underlined  ctermfg=111      ctermbg=none  cterm=underline
-hi  Ignore      ctermfg=16       ctermbg=none  cterm=none
-hi  Error       ctermfg=255      ctermbg=160   cterm=none
-hi  Todo        ctermfg=0        ctermbg=3     cterm=none
-hi  PreProc     ctermfg=33       ctermbg=0   cterm=none
-
-" Code Highlight
-hi  Type             ctermfg=65    ctermbg=none  cterm=none
-
-hi  Boolean          ctermfg=129   ctermbg=none  cterm=none
-hi  Number           ctermfg=129   ctermbg=none  cterm=none
-hi  Float            ctermfg=129   ctermbg=none  cterm=none
-hi  String           ctermfg=112    ctermbg=none  cterm=none
-hi  Character        ctermfg=76    ctermbg=none  cterm=none
-hi  Constant         ctermfg=113   ctermbg=none  cterm=none
-
-hi  Keyword          ctermfg=172   ctermbg=none  cterm=bold
-hi  Repeat           ctermfg=172   ctermbg=none  cterm=bold
-hi  Function         ctermfg=125   ctermbg=none  cterm=bold
-hi  Special          ctermfg=66    ctermbg=none  cterm=none
-hi  SpecialKey       ctermfg=196   ctermbg=none  cterm=none
-hi  NonText          ctermfg=236   ctermbg=none  cterm=none
-hi  Identifier       ctermfg=125   ctermbg=none  cterm=bold
-hi  Statement        ctermfg=172   ctermbg=none  cterm=bold
-hi  Operator         ctermfg=79     ctermbg=none  cterm=none
-
-
-" TagBar Highlight
-hi  TagbarKind                 term=NONE  cterm=bold  ctermbg=0     ctermfg=125
-hi  TagbarScope                term=NONE  cterm=bold  ctermbg=0     ctermfg=125
-hi  TagbarFoldIcon             term=NONE  cterm=NONE  ctermbg=0     ctermfg=3
-hi  TagbarHelpKey              term=NONE  cterm=NONE  ctermbg=0     ctermfg=125
-hi  TagbarHelpTitle            term=NONE  cterm=NONE  ctermbg=0     ctermfg=172
-hi  TagbarHelp                 term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=242
-hi  TagbarNestedKind           term=NONE  cterm=bold  ctermbg=0     ctermfg=172
-hi  TagbarType                 term=NONE  cterm=NONE  ctermbg=0     ctermfg=3
-hi  TagbarSignature            term=NONE  cterm=NONE  ctermbg=0     ctermfg=39
-hi  TagbarPseudoID             term=NONE  cterm=NONE  ctermbg=0     ctermfg=19
-hi  TagbarHighlight            term=NONE  cterm=NONE  ctermbg=10    ctermfg=0
-hi  TagbarAccessPublic         term=NONE  cterm=NONE  ctermbg=0     ctermfg=10
-hi  TagbarAccessProtected      term=NONE  cterm=NONE  ctermbg=0     ctermfg=11
-hi  TagbarAccessPrivate        term=NONE  cterm=NONE  ctermbg=0     ctermfg=9
-hi  TagbarVisibilityPublic     term=NONE  cterm=NONE  ctermbg=0     ctermfg=10
-hi  TagbarVisibilityProtected  term=NONE  cterm=NONE  ctermbg=0     ctermfg=11
-hi  TagbarVisibilityPrivate    term=NONE  cterm=NONE  ctermbg=0     ctermfg=9
-
-" Go Highlight
-let g:go_highlight_functions = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_types = 1
-let g:go_highlight_build_constraints = 1
-"hi link goFunction Function
-"hi goTypeName term=NONE cterm=NONE ctermbg=NONE ctermfg=39
-"hi goTypeConstructor term=NONE cterm=NONE ctermbg=NONE ctermfg=39
-"hi goReceiverType term=NONE cterm=NONE ctermbg=NONE ctermfg=39
-"hi link goDeclaration Statement
-"hi link goVar Statement
-"hi goParamName term=NONE cterm=NONE ctermbg=NONE ctermfg=39
-
-
-" YAML Highlight
-hi yamlDirective ctermbg=184 ctermfg=0
-hi yamlDirectiveName ctermbg=184 ctermfg=0
-
-
-
-" Predict words menu
-
-" VCSVimDiff
-
-" Split column
-
-" Marks column
-
-" GitGutter Symbols
-hi GitGutterAdd          cterm=bold ctermfg=28  ctermbg=0 gui=none guifg=bg guibg=Red
-hi GitGutterChange       cterm=bold ctermfg=208 ctermbg=0 gui=none guifg=bg guibg=Red
-hi GitGutterDelete       cterm=bold ctermfg=160 ctermbg=0 gui=none guifg=bg guibg=Red
-hi GitGutterChangeDelete cterm=bold ctermfg=90  ctermbg=0 gui=none guifg=bg guibg=Red
-
-" Spelling
-
-" todo files
-hi tProject              cterm=bold ctermfg=125 ctermbg=none
-hi tCriticalPriority     cterm=bold ctermfg=160 ctermbg=none
-hi tHighPriority         cterm=none ctermfg=172 ctermbg=none
-hi tMediumPriority       cterm=none ctermfg=69 ctermbg=none
-hi tLowPriority          cterm=none ctermfg=70 ctermbg=none
-hi link tTask Text
-hi tTask                 cterm=none ctermfg=39  ctermbg=none
-hi tTaskDone             cterm=none ctermfg=22  ctermbg=none
-hi tTaskCancelled        cterm=none ctermfg=88  ctermbg=none
-hi tMarker               cterm=none ctermfg=220 ctermbg=none
-hi tMarkerCancelled      cterm=none ctermfg=160 ctermbg=none
-hi tMarkerComplete       cterm=none ctermfg=76  ctermbg=none
-hi tMarkerProgress       cterm=bold ctermfg=76  ctermbg=none
-hi tAttribute            cterm=none ctermfg=172 ctermbg=none
-hi tAttributeCompleted   cterm=none ctermfg=66  ctermbg=none
-let g:TasksMarkerBase = '☐'
-let g:TasksMarkerInProgress = '»'
-let g:TasksMarkerDone = '✔'
-let g:TasksMarkerCancelled = '✘'
-let g:TasksDateFormat = '%Y-%m-%d %H:%M'
-let g:TasksAttributeMarker = '@'
-let g:TasksArchiveSeparator = '＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿'
-
-
-" ---------------------------------------------
-hi notesName      term=NONE  cterm=NONE  ctermbg=0     ctermfg=10
-" notesHiddenMarker xxx links to Ignore
-" notesTagName   xxx links to Underlined
-" notesListBullet xxx links to Comment
-" notesListNumber xxx links to Comment
-" notesDoubleQuoted xxx links to String
-" notesSingleQuoted xxx links to Special
-hi notesInlineCodeMarker term=NONE  cterm=NONE  ctermbg=0     ctermfg=9
-" notesInlineCode xxx links to Special
-" notesItalicMarker xxx links to notesHiddenMarker
-" notesItalic    xxx cterm=italic gui=italic
-" notesBoldMarker xxx links to notesHiddenMarker
-" notesBold      xxx cterm=bold gui=bold
-" notesSubtleURL xxx gui=underline guifg=fg
-" notesTextURL   xxx links to notesSubtleURL
-hi notesRealURL    term=NONE  cterm=NONE  ctermbg=0     ctermfg=40
-hi notesUrlScheme  term=NONE  cterm=NONE  ctermbg=0     ctermfg=40
-hi notesEmailAddr  term=NONE  cterm=NONE  ctermbg=0     ctermfg=57
-" notesUnixPath  xxx links to Directory
-" notesPathLnum  xxx links to Comment
-" notesWindowsPath xxx links to Directory
-hi notesTodo       term=NONE  cterm=bold  ctermbg=0     ctermfg=1
-hi notesXXX        term=NONE  cterm=bold  ctermbg=9     ctermfg=11
-hi notesFixMe      term=NONE  cterm=bold  ctermbg=166   ctermfg=21
-hi notesInProgress term=NONE  cterm=bold  ctermbg=0     ctermfg=14
-hi notesDoneItem   term=NONE  cterm=NONE  ctermbg=0     ctermfg=28
-hi notesDoneMarker term=NONE  cterm=bold  ctermbg=0     ctermfg=10
-" notesVimCmd    xxx links to Special
-hi notesTitle      term=NONE  cterm=bold  ctermbg=0     ctermfg=178
-" notesShortHeading xxx links to Title
-" notesAtxMarker xxx links to Comment
-" notesAtxHeading xxx links to Title
-" notesBlockQuote xxx links to Comment
-hi notesRule       term=NONE  cterm=NONE  ctermbg=0     ctermfg=13
-" notesCodeStart xxx links to Ignore
-" notesCodeEnd   xxx links to Ignore
-" notesModeLine  xxx links to LineNr
-" notesLastEdited xxx links to LineNr
-let g:notes_suffix = '.vnote'
-let g:notes_directories = ['~/work/vim-notes']
-
-
-
-" ---------------------------------------------\
-" -- Configuracion del plugin Airline
-" -----------------------------------------------------------------------------\
 " AirLine Config
-let g:airline_theme='murmur'
+let g:airline_theme='dark'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#whitespace#enabled = 0
 let g:airline#extensions#branch#enabled = 1
@@ -340,8 +172,6 @@ let g:airline_powerline_fonts = 0
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
-
-" Simbolos
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
@@ -356,26 +186,39 @@ let g:airline_symbols.whitespace = ''
 let g:airline#extensions#tabline#left_sep = ''
 let g:airline#extensions#tabline#left_alt_sep = ' '
 
+" TagBar Config
+nmap <F8> :TagbarToggle<CR>
 
+" Tasks Config
+let g:TasksMarkerBase = '☐'
+let g:TasksMarkerInProgress = '»'
+let g:TasksMarkerDone = '✔'
+let g:TasksMarkerCancelled = '✘'
+let g:TasksDateFormat = '%Y-%m-%d %H:%M'
+let g:TasksAttributeMarker = '@'
+let g:TasksArchiveSeparator = '＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿'
 
+" Vim Notes Config
+let g:notes_suffix = '.vnote'
+let g:notes_directories = ['~/work/vim-notes']
 
-" ---------------------------------------------\
-" -- Configuracion del plugin GitGutter
-" -----------------------------------------------------------------------------\
-" Simbolos
+" GitGutter Config
+let g:gitgutter_highlight_linenrs = 1
 let g:gitgutter_highlight_lines = 0
 let g:gitgutter_sign_added = '+'
 let g:gitgutter_sign_modified = '~'
 let g:gitgutter_sign_removed = 'x'
 let g:gitgutter_sign_removed_first_line = '_'
 let g:gitgutter_sign_modified_removed = '-'
+"
+" Go Highlight
+let g:go_highlight_functions = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_types = 1
+let g:go_highlight_build_constraints = 1
 
-
-
-
-" ---------------------------------------------\
-" -- Configuracion del plugin TagBar
-" -----------------------------------------------------------------------------\
+" TagBar Config
 let g:tagbar_ctags_bin = '/usr/bin/ctags'
 let g:tagbar_type_go = {
   \ 'ctagstype' : 'go',
@@ -405,4 +248,94 @@ let g:tagbar_type_go = {
   \ 'ctagsargs' : '-sort -silent'
 \ }
 
+
+
+" ---------------------------------------------\
+" -- Color Configs
+" -----------------------------------------------------------------------------\
+"Colores xterm 256
+set background=dark
+set t_Co=256
+colorscheme villegas-retrobox
+
+
+
+" ---------------------------------------------\
+" -- Highlight Overwrite Config (ONLY add highlights for overwriting the current color-scheme)
+" -----------------------------------------------------------------------------\
+" https://jonasjacek.github.io/colors/
+
+" TagBar Highlight
+hi TagbarKind                 term=NONE  cterm=bold  ctermbg=NONE  ctermfg=125
+hi TagbarScope                term=NONE  cterm=bold  ctermbg=NONE  ctermfg=125
+hi TagbarFoldIcon             term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=10
+hi TagbarHelpKey              term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=125
+hi TagbarHelpTitle            term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=172
+hi TagbarHelp                 term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=242
+hi TagbarNestedKind           term=NONE  cterm=bold  ctermbg=NONE  ctermfg=172
+hi TagbarType                 term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=3
+hi TagbarSignature            term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=39
+hi TagbarPseudoID             term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=19
+hi TagbarHighlight            term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=128
+hi TagbarAccessPublic         term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=10
+hi TagbarAccessProtected      term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=11
+hi TagbarAccessPrivate        term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=9
+hi TagbarVisibilityPublic     term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=10
+hi TagbarVisibilityProtected  term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=11
+hi TagbarVisibilityPrivate    term=NONE  cterm=NONE  ctermbg=NONE  ctermfg=9
+
+" YAML Highlight
+hi yamlDirective              ctermbg=184  ctermfg=0
+hi yamlDirectiveName          ctermbg=184  ctermfg=0
+
+" todo files
+hi tProject                   cterm=bold  ctermfg=125  ctermbg=NONE
+hi tCriticalPriority          cterm=bold  ctermfg=160  ctermbg=NONE
+hi tHighPriority              cterm=none  ctermfg=172  ctermbg=NONE
+hi tMediumPriority            cterm=none  ctermfg=69   ctermbg=NONE
+hi tLowPriority               cterm=none  ctermfg=70   ctermbg=NONE
+hi link                       tTask       Text
+hi tTask                      cterm=none  ctermfg=39   ctermbg=NONE
+hi tTaskDone                  cterm=none  ctermfg=22   ctermbg=NONE
+hi tTaskCancelled             cterm=none  ctermfg=88   ctermbg=NONE
+hi tMarker                    cterm=none  ctermfg=220  ctermbg=NONE
+hi tMarkerCancelled           cterm=none  ctermfg=160  ctermbg=NONE
+hi tMarkerComplete            cterm=none  ctermfg=76   ctermbg=NONE
+hi tMarkerProgress            cterm=bold  ctermfg=76   ctermbg=NONE
+hi tAttribute                 cterm=none  ctermfg=172  ctermbg=NONE
+hi tAttributeCompleted        cterm=none  ctermfg=66   ctermbg=NONE
+
+" -- VimNotes Highlights
+hi notesName                  term=NONE  cterm=NONE  ctermbg=0    ctermfg=10
+hi notesInlineCodeMarker      term=NONE  cterm=NONE  ctermbg=0    ctermfg=9
+hi notesRealURL               term=NONE  cterm=NONE  ctermbg=0    ctermfg=40
+hi notesUrlScheme             term=NONE  cterm=NONE  ctermbg=0    ctermfg=40
+hi notesEmailAddr             term=NONE  cterm=NONE  ctermbg=0    ctermfg=57
+hi notesTodo                  term=NONE  cterm=bold  ctermbg=0    ctermfg=1
+hi notesXXX                   term=NONE  cterm=bold  ctermbg=9    ctermfg=11
+hi notesFixMe                 term=NONE  cterm=bold  ctermbg=166  ctermfg=21
+hi notesInProgress            term=NONE  cterm=bold  ctermbg=0    ctermfg=14
+hi notesDoneItem              term=NONE  cterm=NONE  ctermbg=0    ctermfg=28
+hi notesDoneMarker            term=NONE  cterm=bold  ctermbg=0    ctermfg=10
+hi notesTitle                 term=NONE  cterm=bold  ctermbg=0    ctermfg=178
+hi notesRule                  term=NONE  cterm=NONE  ctermbg=0    ctermfg=13
+
+" -- GitGutter Highlights
+hi GitGutterAdd                guifg=bg guibg=#ff0000 guisp=NONE gui=NONE ctermfg=34  ctermbg=234 cterm=bold term=NONE
+hi GitGutterChange             guifg=bg guibg=#ff0000 guisp=NONE gui=NONE ctermfg=214 ctermbg=234 cterm=bold term=NONE
+hi GitGutterDelete             guifg=bg guibg=#ff0000 guisp=NONE gui=NONE ctermfg=160 ctermbg=234 cterm=bold term=NONE
+hi GitGutterChangeDelete       guifg=bg guibg=#ff0000 guisp=NONE gui=NONE ctermfg=90  ctermbg=234 cterm=bold term=NONE
+
+" -- Ale Highlights
+hi ALEWarningSign              guifg=bg guibg=#ff0000 guisp=NONE gui=NONE ctermbg=208 ctermfg=15  cterm=bold term=NONE
+hi ALEErrorSign                guifg=bg guibg=#ff0000 guisp=NONE gui=NONE ctermbg=124 ctermfg=15  cterm=bold term=NONE
+hi ALEInfoSign                 guifg=bg guibg=#ff0000 guisp=NONE gui=NONE ctermbg=26  ctermfg=220 cterm=bold term=NONE
+
+
+
+" ---------------------------------------------\
+" -- Extra
+" -----------------------------------------------------------------------------\
+" Custom Matches and colors
+hi  ExtraWhitespace guifg=#ffffff  guibg=#ff0000  guisp=NONE     gui=NONE            ctermfg=255   ctermbg=9     cterm=none            term=NONE
 match ExtraWhitespace /\s\+$/
