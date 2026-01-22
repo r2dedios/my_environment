@@ -1,0 +1,50 @@
+## LAYER 1
+bindcode 191 exec i3-msg workspace $ws1;  exec --no-startup-id st
+bindcode 192 exec i3-msg workspace $ws1;  exec --no-startup-id st ranger
+bindcode 193 exec i3-msg workspace $ws1;  exec --no-startup-id st vim
+bindcode 194 exec i3-msg workspace $ws1;  exec --no-startup-id st htop
+
+bindcode 195 exec i3-msg workspace $ws1;  exec --no-startup-id google-chrome --profile-directory="Default"
+bindcode 196 exec i3-msg workspace $ws3;  exec --no-startup-id google-chrome --profile-directory="Profile 1"
+bindcode 197 exec i3-msg workspace $ws3;  exec --no-startup-id google-chrome --profile-directory="Profile 2"
+bindcode 198 exec i3-msg workspace $ws3;  exec --no-startup-id brave-browser
+bindcode 199 exec i3-msg workspace $ws1;  exec --no-startup-id i3lock --color 660066 --nofork
+bindcode 200 exec i3-msg workspace $ws4;  exec --no-startup-id flatpak run com.spotify.Client
+bindcode 201 exec i3-msg workspace $ws1;  exec --no-startup-id flameshot gui
+bindcode 202 exec                              --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && pkill -RTMIN+1 i3blocks
+
+## LAYER 2
+bindcode Ctrl+191 exec i3-msg workspace $ws1;  exec --no-startup-id ~/.config/i3/scripts/screenlayout-work work
+bindcode Ctrl+192 exec i3-msg workspace $ws1;  exec --no-startup-id ~/.config/i3/scripts/screenlayout-work dual
+bindcode Ctrl+193 exec i3-msg workspace $ws1;  exec --no-startup-id ~/.config/i3/scripts/screenlayout-work single
+bindcode Ctrl+194 exec i3-msg workspace $ws1;  exec --no-startup-id ~/.config/i3/scripts/screenlayout-work arandr
+
+bindcode Ctrl+195 exec i3-msg workspace $ws1;  exec --no-startup-id st -T Updater -e sh -c "sudo dnf update --refresh || sleep 10"
+bindcode Ctrl+196 exec i3-msg workspace $ws3;  exec --no-startup-id google-chrome --profile-directory="Profile 1"
+bindcode Ctrl+197 exec i3-msg workspace $ws3;  exec --no-startup-id google-chrome --profile-directory="Profile 2"
+bindcode Ctrl+198 exec i3-msg workspace $ws3;  exec --no-startup-id brave-browser
+
+bindcode Ctrl+199 exec i3-msg workspace $ws1;  exec --no-startup-id ~/.config/i3/scripts
+bindcode Ctrl+200 exec i3-msg workspace $ws4;  exec --no-startup-id flatpak run com.spotify.Client
+bindcode Ctrl+201 exec i3-msg workspace $ws1;  exec --no-startup-id flameshot gui
+bindcode Ctrl+202 exec                              --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && pkill -RTMIN+1 i3blocks
+
+## LAYER 3
+bindcode Shift+191 exec i3-msg workspace $ws1;  exec --no-startup-id st
+bindcode Shift+192 exec i3-msg workspace $ws1;  exec --no-startup-id st ranger
+bindcode Shift+193 exec i3-msg workspace $ws1;  exec --no-startup-id st vim
+bindcode Shift+194 exec i3-msg workspace $ws1;  exec --no-startup-id st htop
+
+bindcode Shift+195 exec i3-msg workspace $ws1;  exec --no-startup-id google-chrome --profile-directory="Default"
+bindcode Shift+196 exec i3-msg workspace $ws3;  exec --no-startup-id google-chrome --profile-directory="Profile 1"
+bindcode Shift+197 exec i3-msg workspace $ws3;  exec --no-startup-id google-chrome --profile-directory="Profile 2"
+bindcode Shift+198 exec i3-msg workspace $ws3;  exec --no-startup-id brave-browser
+
+bindcode Shift+199 exec i3-msg workspace $ws1;  exec --no-startup-id ~/.config/i3/scripts
+bindcode Shift+200 exec i3-msg workspace $ws4;  exec --no-startup-id flatpak run com.spotify.Client
+bindcode Shift+201 exec i3-msg workspace $ws1;  exec --no-startup-id flameshot gui
+bindcode Shift+202 exec                              --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && pkill -RTMIN+1 i3blocks
+
+bindcode 123 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && pkill -RTMIN+1 i3blocks
+bindcode 122 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && pkill -RTMIN+1 i3blocks
+bindcode 121 exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+1 i3blocks
