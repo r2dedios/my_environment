@@ -110,6 +110,16 @@ function install_i3wm_config() {
   echo "-- Installed i3wm scripts"
 }
 
+# Install i3wm config for custom keybindings
+function install_i3wm_custom_keybindings() {
+  create_dir $DEST_USER_HOME_DIR/.config/i3
+
+  backup_file $DEST_USER_HOME_DIR/.config/i3/i3wm_custom_keybindings
+  link_file i3wm_config/i3wm_custom_keybindings $DEST_USER_HOME_DIR/.config/i3/i3wm_custom_keybindings
+
+  echo "-- Installed i3wm custom keybindings config"
+}
+
 # Install basic packages
 function install_basic_packages() {
   install_packages "$PACKAGES_BASIC"
@@ -282,6 +292,7 @@ function install() {
       k8s_alias) install_bash_k8s_alias ;;
       vim) install_vim_config ;;
       i3wm) install_i3wm_config ;;
+      i3wm-custom-keybindings) install_i3wm_custom_keybindings ;;
       dunst) install_dunst_config ;;
       suckless) install_suckless_packages ;;
       extra_packages) install_extra_packages ;;
@@ -302,12 +313,13 @@ options=(
   3 "Bash custom config" off
   4 "Bash custom aliases" off
   5 "ViM" off
-  6 "i3wm" off
-  7 "dunst (Requires: Basic packages)" off
-  8 "Suckless software tools (Requires: 'Basic + Development packages')" off
-  9 "Extra Packages (Requires sudo)" off
-  10 "Container tools Packages (Requires sudo)" off
-  11 "Developer Packages (Requires sudo)" off
+  7 "i3wm" off
+  7 "i3wm custom keybindings" off
+  8 "dunst (Requires: Basic packages)" off
+  9 "Suckless software tools (Requires: 'Basic + Development packages')" off
+  10 "Extra Packages (Requires sudo)" off
+  11 "Container tools Packages (Requires sudo)" off
+  12 "Developer Packages (Requires sudo)" off
 )
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 [[ $? -eq 1 ]] && { dialog --title "Aborted" --msgbox "Installation Aborted" 7 80; clear; exit; }
@@ -323,11 +335,12 @@ do
     4) modules+=("k8s_alias") ;;
     5) modules+=("vim") ;;
     6) modules+=("i3wm") ;;
-    7) modules+=("dunst") ;;
-    8) modules+=("suckless") ;;
-    9) modules+=("extra_packages") ;;
-    10) modules+=("containers_packages") ;;
-    11) modules+=("developer_packages") ;;
+    7) modules+=("i3wm-custom-keybindings") ;;
+    8) modules+=("dunst") ;;
+    9) modules+=("suckless") ;;
+    10) modules+=("extra_packages") ;;
+    11) modules+=("containers_packages") ;;
+    12) modules+=("developer_packages") ;;
   esac
 done
 

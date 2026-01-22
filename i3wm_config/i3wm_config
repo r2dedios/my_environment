@@ -15,7 +15,7 @@
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:Source Code Pro, FontAwesome:style=Regular 12
+font pango:Source Code Pro, FontAwesome:style=Regular 11
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
@@ -30,15 +30,6 @@ exec --no-startup-id nm-applet
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && pkill -RTMIN+1 i3blocks
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && pkill -RTMIN+1 i3blocks
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+1 i3blocks
-bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
-
-bindsym XF86AudioPlay exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
-bindsym XF86AudioStop exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Stop"
-bindsym XF86AudioPrev exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous"
-bindsym XF86AudioNext exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
 
 # use these keys for focus, movement, and resize directions when reaching for
 # the arrows is not convenient
@@ -267,9 +258,12 @@ mode $session {
 bindsym Mod1+Shift+s mode $session
 
 set $monitor_laptop "eDP-1"
+set $monitor_main "DP-2-1-6"
+set $monitor_sec "DP-2-2"
+
 workspace $ws1 output $monitor_main
 workspace $ws2 output $monitor_main
-workspace $ws3 output $monitor_sec
+workspace $ws3 output $monitor_main
 workspace $ws4 output $monitor_sec
 workspace $ws5 output $monitor_sec
 workspace $ws6 output $monitor_sec
@@ -279,20 +273,14 @@ workspace $ws9 output $monitor_sec
 workspace $ws10 output $monitor_laptop
 
 
+for_window [window_role="^floating$"] floating enable
+for_window [class="st" title="Updater"] floating enable, resize set 1800 900, move position center
+
 # Macro Keyboard bindings
-for_window [window_role="^floating$"] floating enable workspace $ws3
-# Mute Mic
-bindcode 206 exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
-bindsym XF86Launch1 exec i3-msg workspace $ws1;  exec --no-startup-id st
-bindsym XF86Launch2 exec i3-msg workspace $ws1;  exec --no-startup-id google-chrome --profile-directory="Default"
-bindsym XF86Launch3 exec i3-msg workspace $ws3;  exec --no-startup-id slack
-bindsym XF86Launch4 exec i3-msg workspace $ws10; exec --no-startup-id spotify
-bindsym XF86Launch5 exec i3-msg workspace $ws4;  exec --no-startup-id google-chrome --profile-directory="Profile 2"
-bindsym XF86Launch6 exec i3-msg workspace $ws3;  exec --no-startup-id terminator -e "top" --role=floating
-bindsym XF86Launch7 exec i3-msg workspace $ws2;  exec --no-startup-id terminator -e "ranger"
-bindsym XF86Launch8 exec i3-msg workspace $ws2;  exec --no-startup-id terminator -e "vim"
-bindsym XF86Launch9 exec i3-msg workspace $ws1; exec --no-startup-id gnome-control-center
-bindsym XF86LaunchA exec --no-startup-id flameshot gui
-bindsym XF86LaunchB exec ~/.config/i3/scripts/i3lock/lock
-bindsym XF86Go exec arandr
-bindsym XF86Shop kill
+include ~/.config/i3/i3wm_custom_keybindings
+
+# Audio/Media bindings
+bindsym XF86AudioPlay exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
+bindsym XF86AudioStop exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Stop"
+bindsym XF86AudioPrev exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous"
+bindsym XF86AudioNext exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
